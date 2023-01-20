@@ -1,12 +1,12 @@
 # Fantasy Fabricator
-A tool to help you create and manage your adventures, characters, and enemies with ease.
+A tool to help you create and manage your adventures, characters, and enemies with the help of GPT-3.
 
 ## Features
-Adventure Builder: Use GPT-3 to generate unique and exciting adventure ideas.
-Character Generator: Use GPT-3 to generate detailed and compelling characters.
-Enemy Generator: Use GPT-3 to generate terrifying and challenging enemies.
-Campaign Manager: Keep track of your campaigns and adventures.
-Map Generator: Use GPT-3 to generate detailed and immersive maps.
+- Adventure Builder: Generate unique and exciting adventure ideas.
+- NPC Generator: Generate detailed and compelling characters.
+- Enemy Generator: Generate terrifying and challenging enemies.
+- Campaign Manager: Keep track of your campaigns and adventures.
+- Map Generator: Create detailed and immersive maps.
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
