@@ -1,19 +1,27 @@
 <template>
-  <div>
+  <div class="container my-5">
+    <h2 class="text-center mb-5">Adventure Builder</h2>
     <form>
-      <label for="adventure-title">Adventure Title:</label>
-      <input type="text" id="adventure-title" v-model="adventureTitle" placeholder="Enter Adventure Title">
-      <br><br>
-      <label for="adventure-setting">Adventure Setting:</label>
-      <input type="text" id="adventure-setting" v-model="adventureSetting" placeholder="Enter Adventure Setting">
-      <br><br>
-      <label for="adventure-plot">Adventure Plot:</label>
-      <textarea id="adventure-plot" v-model="adventurePlot" placeholder="Enter Adventure Plot"></textarea>
-      <br><br>
-      <button v-on:click="generateAdventure()">Generate Adventure</button>
+      <div class="form-group">
+        <label for="adventure-title">Adventure Title:</label>
+        <input type="text" class="form-control" id="adventure-title" v-model="adventureTitle"
+          placeholder="Enter Adventure Title">
+      </div>
+      <div class="form-group">
+        <label for="adventure-setting">Adventure Setting:</label>
+        <input type="text" class="form-control" id="adventure-setting" v-model="adventureSetting"
+          placeholder="Enter Adventure Setting">
+      </div>
+      <div class="form-group">
+        <label for="adventure-plot">Adventure Plot:</label>
+        <textarea class="form-control" id="adventure-plot" v-model="adventurePlot"
+          placeholder="Enter Adventure Plot"></textarea>
+      </div>
+      <button class="btn btn-primary" v-on:click="generateAdventure()">Generate Adventure</button>
     </form>
   </div>
 </template>
+
 
 <script>
 export default {

@@ -1,11 +1,47 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import AdventureBuilder from '../components/adventure_builder.vue'
+import CampaignManager from '../components/campaign_manager.vue'
+import CharacterGenerator from '../components/character_generator.vue'
+import Community_Support from '../components/community_support.vue'
+import Encounter_Builder from '../components/encounter_builder.vue'
+import Map_Generator from '../components/map_generator.vue'
+import Landing_Page from '../components/landing_page.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'Dashboard',
-    component: HomeView
+    name: 'landing_page',
+    component: Landing_Page
+  },
+  {
+    path: '/adventure_builder',
+    name: 'adventure builder',
+    component: AdventureBuilder
+  },
+  {
+    path: '/campaign_manager',
+    name: 'campaign manager',
+    component: CampaignManager
+  },
+  {
+    path: '/character_generator',
+    name: 'character generator',
+    component: CharacterGenerator
+  },
+  {
+    path: '/community_support',
+    name: 'community support',
+    component: Community_Support
+  },
+  {
+    path: '/encounter_builder',
+    name: 'encounter builder',
+    component: Encounter_Builder
+  },
+  {
+    path: '/map_generator',
+    name: 'map generator',
+    component: Map_Generator
   },
   {
     path: '/about',

@@ -1,19 +1,27 @@
 <template>
-    <div>
+    <div class="container my-5">
+        <h2 class="text-center mb-5">Character Generator</h2>
         <form>
-            <label for="character-name">Character Name:</label>
-            <input type="text" id="character-name" v-model="characterName" placeholder="Enter Character Name">
-            <br><br>
-            <label for="character-race">Character Race:</label>
-            <input type="text" id="character-race" v-model="characterRace" placeholder="Enter Character Race">
-            <br><br>
-            <label for="character-class">Character Class:</label>
-            <input type="text" id="character-class" v-model="characterClass" placeholder="Enter Character Class">
-            <br><br>
-            <button v-on:click="generateCharacter()">Generate Character</button>
+            <div class="form-group">
+                <label for="character-name">Character Name:</label>
+                <input type="text" class="form-control" id="character-name" v-model="characterName"
+                    placeholder="Enter Character Name">
+            </div>
+            <div class="form-group">
+                <label for="character-race">Character Race:</label>
+                <input type="text" class="form-control" id="character-race" v-model="characterRace"
+                    placeholder="Enter Character Race">
+            </div>
+            <div class="form-group">
+                <label for="character-class">Character Class:</label>
+                <input type="text" class="form-control" id="character-class" v-model="characterClass"
+                    placeholder="Enter Character Class">
+            </div>
+            <button class="btn btn-primary" v-on:click="generateCharacter()">Generate Character</button>
         </form>
     </div>
 </template>
+  
 
 <script>
 export default {
