@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <h2 class="text-center mb-5">Adventure Builder</h2>
+    <h2 class="text-center mb-5 heading">Adventure Builder</h2>
     <form>
       <div class="form-group"></div>
       <div class="row mb-5">
@@ -59,55 +59,77 @@
       <button class="btn btn-primary" v-on:click="generateAdventure()">Generate Adventure</button>
     </form>
   </div>
-  <div class="container my-5" v-if="adventure">
-    <div class="row">
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header bg-secondary text-white">Title</div>
-          <div class="card-body bg-light">{{ adventure.AdventureTitle }}</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header bg-secondary text-white">Hook</div>
-          <div class="card-body bg-light">{{ adventure.AdventureHook }}</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header bg-secondary text-white">Plot</div>
-          <div class="card-body bg-light">{{ adventure.AdventurePlot }}</div>
-        </div>
-      </div>
-      <div class="container my-5" v-if="adventure">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header bg-secondary text-white">Climax</div>
-              <div class="card-body bg-light">{{ adventure.AdventureClimax }}</div>
-            </div>
+  <transition name="fade">
+    <div class="container my-5" v-if="adventure">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-secondary text-white">Title</div>
+            <div class="card-body bg-light">{{ adventure.AdventureTitle }}</div>
           </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header bg-secondary text-white">Resolution</div>
-              <div class="card-body bg-light">{{ adventure.AdventureResolution }}</div>
-            </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-secondary text-white">Hook</div>
+            <div class="card-body bg-light">{{ adventure.AdventureHook }}</div>
           </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header bg-secondary text-white">NPC</div>
-              <div class="card-body bg-light">{{ adventure.AdventureNPCs }}</div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-secondary text-white">Plot</div>
+            <div class="card-body bg-light">{{ adventure.AdventurePlot }}</div>
+          </div>
+        </div>
+        <div class="container my-5" v-if="adventure">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header bg-secondary text-white">Climax</div>
+                <div class="card-body bg-light">{{ adventure.AdventureClimax }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header bg-secondary text-white">Resolution</div>
+                <div class="card-body bg-light">{{ adventure.AdventureResolution }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header bg-secondary text-white">NPC</div>
+                <div class="card-body bg-light">{{ adventure.AdventureNPCs }}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 <style>
 label {
   font-weight: bold;
   text-align: right;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.card-body {
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 </style>
 <script>
@@ -124,6 +146,7 @@ export default {
   },
   methods: {
     generateAdventure() {
+      this.adventure = null;
       const path = `${backendURL}/generate_adventure`;
       axios.post(path, {
         adventureTitle: this.adventureTitle,
