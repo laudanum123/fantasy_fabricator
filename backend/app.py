@@ -1,34 +1,30 @@
-from flask import Flask, render_template
+"""
+    This is the main entry point of the application.
+"""
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+app.config.from_object(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.route('/')
-def home():
-    return render_template('index.html')
 
-if __name__ == '__main__':
-    app.run()
+@app.route("/generate_character", methods=["GET"])
+def generate_character():
+    '''
+    create adventure based on user input using GPT-3
+    '''
+    return jsonify("test!")
 
-# routes.py
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+@app.route('/generate_adventure', methods=['POST'])
+def generate_adventure():
+    '''
+    create adventure based on user input using GPT-3
+    '''
+    message_body = request.json
+    return jsonify({"status": "success", "message": message_body}, 201)
 
-@app.route('/adventure', methods=['POST'])
-def create_adventure():
-    # code to create an adventure
-    pass
-
-@app.route('/character', methods=['POST'])
-def create_character():
-    pass
-    # code to create a character
-
-# etc.
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -2,28 +2,73 @@
   <div class="container my-5">
     <h2 class="text-center mb-5">Adventure Builder</h2>
     <form>
-      <div class="form-group">
-        <label for="adventure-title">Adventure Title:</label>
-        <input type="text" class="form-control" id="adventure-title" v-model="adventureTitle"
-          placeholder="Enter Adventure Title">
+      <div class="form-group"></div>
+      <div class="row mb-5">
+
+        <div class="col-md-4">
+          <label for="adventure-title">Adventure Title:</label>
+        </div>
+        <div class="col-md-8">
+          <input type="text" class="form-control" id="adventure-title" v-model="adventureTitle"
+            placeholder="Enter a title for your adventure (e.g. 'The Lost Temple', 'Rescue the Princess')">
+        </div>
       </div>
       <div class="form-group">
-        <label for="adventure-setting">Adventure Setting:</label>
-        <input type="text" class="form-control" id="adventure-setting" v-model="adventureSetting"
-          placeholder="Enter Adventure Setting">
+        <div class="row mb-5">
+          <div class="col-md-4">
+            <label for="adventure-setting">Adventure Setting:</label>
+          </div>
+          <div class="col-md-8">
+            <select class="form-control" id="adventure-setting" v-model="adventureSetting">
+              <option value="medieval fantasy">Medieval Fantasy</option>
+              <option value="post-apocalyptic">Post-Apocalyptic</option>
+              <option value="steampunk">Steampunk</option>
+              <option value="horror">Horror</option>
+              <option value="superheroes">Superheroes</option>
+              <option value="science fiction">Science Fiction</option>
+              <option value="urban fantasy">Urban Fantasy</option>
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="historical">Historical</option>
+              <option value="high fantasy">High Fantasy</option>
+              <option value="space opera">Space Opera</option>
+              <option value="time travel">Time Travel</option>
+              <option value="zombie apocalypse">Zombie Apocalypse</option>
+              <option value="dystopian">Dystopian</option>
+              <option value="mythological">Mythological</option>
+              <option value="alternate history">Alternate History</option>
+              <option value="western">Western</option>
+              <option value="pirates">Pirates</option>
+              <option value="vampires">Vampires</option>
+              <option value="werewolves">Werewolves</option>
+              <option value="other">Other (please specify in the field below)</option>
+            </select>
+            <input type="text" class="form-control mt-2" v-if="adventureSetting === 'other'" v-model="customSetting"
+              placeholder="Enter your own adventure setting">
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="adventure-plot">Adventure Plot:</label>
-        <textarea class="form-control" id="adventure-plot" v-model="adventurePlot"
-          placeholder="Enter Adventure Plot"></textarea>
+      <div class="form-group mb-5">
+        <div class="row mb-5">
+          <div class="col-md-4"><label for="adventure-plot">Adventure Plot:</label></div>
+          <div class="col-md-8">
+            <textarea class="form-control" id="adventure-plot" v-model="adventurePlot"
+              placeholder="Enter a brief description of the adventure's main plot or goal (e.g. 'The players must find a way to stop an ancient evil from being unleashed', 'The players are hired to infiltrate a rival guild and steal a powerful artifact')"></textarea>
+          </div>
+        </div>
       </div>
       <button class="btn btn-primary" v-on:click="generateAdventure()">Generate Adventure</button>
     </form>
   </div>
 </template>
-
-
+<style>
+label {
+  font-weight: bold;
+  text-align: right;
+}
+</style>
 <script>
+import axios from 'axios';
+const backendURL = 'http://localhost:5000';
 export default {
   data() {
     return {
@@ -34,9 +79,18 @@ export default {
   },
   methods: {
     generateAdventure() {
-      // Use GPT-3 to generate text based on the input provided by the user
-      // You can use axios or any other http library to call the GPT-3 API
-      // and generate the text and then display it on the page
+      const path = `${backendURL}/generate_adventure`;
+      axios.post(path, {
+        adventureTitle: this.adventureTitle,
+        adventureSetting: this.adventureSetting,
+        adventurePlot: this.adventurePlot
+      })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 }

@@ -5,6 +5,9 @@
       <h1 class="display-4">Welcome to Fantasy Fabricator</h1>
       <p class="lead">Become the ultimate dungeon master with Fantasy Fabricator, where AI-generated adventures,
         characters, and enemies await</p>
+      <p class="text-muted">Say goodbye to writer's block and hello to endless possibilities with Fantasy Fabricator.
+        Our AI-powered tool generates unique and exciting adventure ideas, detailed and compelling characters, and
+        terrifying and challenging enemies. Take your campaigns to the next level with Fantasy Fabricator.</p>
       <hr class="my-4">
     </div>
 
@@ -66,6 +69,16 @@
             <router-link to="/community" class="btn btn-primary">Join Community</router-link>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row my-5">
+      <div class="col-md-12 text-center">
+        <h2>Why Use Fantasy Fabricator?</h2>
+        <p>Fantasy Fabricator utilizes the power of AI to revolutionize the way you create and manage your RPG
+          campaigns. Say goodbye to hours spent on coming up with unique adventure ideas or creating detailed characters
+          - our AI-generated content will give you endless possibilities for your campaigns. Plus, our campaign manager
+          feature allows for easy organization and planning, and our community support feature connects you with other
+          dungeon masters for tips and support. Fantasy Fabricator is the ultimate tool for any dungeon master.</p>
       </div>
     </div>
   </div>
