@@ -59,6 +59,50 @@
       <button class="btn btn-primary" v-on:click="generateAdventure()">Generate Adventure</button>
     </form>
   </div>
+  <div class="container my-5" v-if="adventure">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-secondary text-white">Title</div>
+          <div class="card-body bg-light">{{ adventure.AdventureTitle }}</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-secondary text-white">Hook</div>
+          <div class="card-body bg-light">{{ adventure.AdventureHook }}</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header bg-secondary text-white">Plot</div>
+          <div class="card-body bg-light">{{ adventure.AdventurePlot }}</div>
+        </div>
+      </div>
+      <div class="container my-5" v-if="adventure">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-secondary text-white">Climax</div>
+              <div class="card-body bg-light">{{ adventure.AdventureClimax }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-secondary text-white">Resolution</div>
+              <div class="card-body bg-light">{{ adventure.AdventureResolution }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-secondary text-white">NPC</div>
+              <div class="card-body bg-light">{{ adventure.AdventureNPCs }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <style>
 label {
@@ -75,6 +119,7 @@ export default {
       adventureTitle: '',
       adventureSetting: '',
       adventurePlot: '',
+      adventure: null,
     }
   },
   methods: {
@@ -87,6 +132,7 @@ export default {
       })
         .then(response => {
           console.log(response);
+          this.adventure = JSON.parse(response.data[0].message.choices[0].text.replace(/[^\x20-\x7E]+/g, ''));
         })
         .catch(error => {
           console.log(error);
