@@ -60,5 +60,5 @@ python ./backend/app.py
 Please fork the repo and create a pull request if you want to contribute
 
 Authors
-Jörg Eitner - Initial work - laudanum123
+Laudanum - Initial work - laudanum123
 
