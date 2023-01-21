@@ -1,6 +1,8 @@
 # Fantasy Fabricator
 A tool to help you create and manage your adventures, characters, and enemies with the help of GPT-3.
 
+![Screenshot of the application](sample.png)
+
 ## Features
 - Adventure Builder: Generate unique and exciting adventure ideas.
 - NPC Generator: Generate detailed and compelling characters.
