@@ -17,7 +17,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installing
 1. Clone the repository
 ```sh
-git clone https://github.com/laudanum123/dnd_master.git
+git clone https://github.com/laudanum123/fantasy_fabricator.git
 ```
 2. Install the dependencies
 ```sh
@@ -34,7 +34,7 @@ npm run serve
 - Bootstrap - CSS Framework
 
 ## Contributing
-Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
+Please fork the repo and create a pull request if you want to contribute
 
 Authors
 Jörg Eitner - Initial work - laudanum123
