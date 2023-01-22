@@ -51,7 +51,9 @@ def generate_adventure():
                                         prompt=prompt,
                                         max_tokens=2000)
 
-    return jsonify({"status": "success", "message": response}, 201)
+    response = jsonify({"status": "success", "message": response})
+    response.status_code = 201
+    return response
 
 
 if __name__ == '__main__':
