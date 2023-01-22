@@ -26,7 +26,7 @@ git clone https://github.com/laudanum123/fantasy_fabricator.git
 ```
 2. Install the dependencies
 ```sh
-npm install
+./frontend/ npm install
 ```
 ```sh
 pip install requirements.txt
@@ -37,7 +37,7 @@ touch ./backend/api_key.py
 ```
 ```python
 #./backend/api_key.py
-API-KEY = 'YOUR-OPENAI-API-KEY'
+API_KEY = 'YOUR-OPENAI-API-KEY'
 # Make sure to add this file to .gitignore if you plan on contributing
 ```
 
