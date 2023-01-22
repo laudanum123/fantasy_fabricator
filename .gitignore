@@ -2,6 +2,4 @@ api_key.py
 .vscode
 prompts.txt
 .envrc
-__pycache__/api_key.cpython-39.pyc
-backend/__pycache__/app.cpython-39.pyc
-backend/__pycache__/api_key.cpython-39.pyc
+*__pycache__/
