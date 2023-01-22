@@ -5,20 +5,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import openai
 from api_key import API_KEY
+import models
+import utilities
 
 openai.api_key = API_KEY
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
-
-@app.route("/generate_character", methods=["GET"])
-def generate_character():
-    '''
-    create adventure based on user input using GPT-3
-    '''
-    return jsonify("test!")
 
 
 @app.route('/generate_adventure', methods=['POST'])
@@ -51,7 +45,8 @@ def generate_adventure():
                                         prompt=prompt,
                                         max_tokens=2000)
 
-    response = jsonify({"status": "success", "message": response})
+    gpt_json = utilities.convert_response_to_json(response)
+    response = jsonify({"status": "success", "message": gpt_json})
     response.status_code = 201
     return response
 
