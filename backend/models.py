@@ -32,6 +32,16 @@ class Adventures(Base):
     def __repr__(self):
         return f'<Adventure {self.adventure_title}>'
 
+    def adventure_from_response(self, response):
+        '''This method creates an adventure object from the response'''
+        adventure = Adventures(response['AdventureTitle'],
+                               response['AdventureHook'],
+                               response['AdventurePlot'],
+                               response['AdventureClimax'],
+                               response['AdventureResolution'],
+                               response['AdventureNPCs'])
+        return adventure
+
 
 class AdventureNPCs(Base):
     '''This class contains the model for the adventure_npcs table'''
