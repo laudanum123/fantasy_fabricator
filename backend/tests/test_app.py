@@ -3,12 +3,11 @@ import json
 from unittest.mock import patch
 from app import app
 import utilities
-import models
 
 
 @patch('models.Adventures')
 @patch('openai.Completion.create')
-def test_generate_adventure(mock_create, mock_adventures):
+def test_generate_adventure(mock_create, _):
     '''Tests generate_adventure route'''
     # set up mock response
     mock_response = {
