@@ -29,7 +29,7 @@ git clone https://github.com/laudanum123/fantasy_fabricator.git
 ./frontend/ npm install
 ```
 ```sh
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 3. Create API-File with your OpenAI API-Key
 ```sh
