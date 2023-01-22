@@ -26,7 +26,8 @@ git clone https://github.com/laudanum123/fantasy_fabricator.git
 ```
 2. Install the dependencies
 ```sh
-./frontend/ npm install
+cd frontend/ 
+npm install
 ```
 ```sh
 pip install -r requirements.txt
@@ -43,10 +44,11 @@ API_KEY = 'YOUR-OPENAI-API-KEY'
 
 4. Start the development server
 ```sh
-./frontend/ npm run serve
+cd frontend/ 
+npm run serve
 ```
 ```sh
-python ./backend/app.py
+python backend/app.py
 ```
 
 4. Open http://localhost:8080 in your browser to see the application.
