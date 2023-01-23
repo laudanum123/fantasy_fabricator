@@ -1,8 +1,9 @@
 '''Tests for app.py'''
 import json
 from unittest.mock import patch
-from app import app
+
 import utilities
+from app import app
 
 
 @patch('models.Adventures')
@@ -18,7 +19,7 @@ def test_generate_adventure(mock_create, _):
         "created":
         1620000000,
         "model":
-        "davinci:2020-05-03",
+        "davinci003",
         "choices": [{
             "text": """{
         "AdventureTitle": "The Lost Temple",
@@ -57,6 +58,7 @@ def test_generate_adventure(mock_create, _):
     response = client.post('/generate_adventure',
                            data=json.dumps(test_data),
                            content_type='application/json')
+
     data = json.loads(response.get_data())
 
     # assert response
