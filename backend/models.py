@@ -1,7 +1,6 @@
 '''This file contains the models for the database'''
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
 
 engine = create_engine('sqlite:///fantasy_fabricator.db')
 
@@ -31,16 +30,6 @@ class Adventures(Base):
 
     def __repr__(self):
         return f'<Adventure {self.adventure_title}>'
-
-    def adventure_from_response(self, response):
-        '''This method creates an adventure object from the response'''
-        adventure = Adventures(response['AdventureTitle'],
-                               response['AdventureHook'],
-                               response['AdventurePlot'],
-                               response['AdventureClimax'],
-                               response['AdventureResolution'],
-                               response['AdventureNPCs'])
-        return adventure
 
 
 class AdventureNPCs(Base):

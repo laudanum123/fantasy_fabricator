@@ -1,12 +1,12 @@
 """
     This is the main entry point of the application.
 """
+import models
+import openai
+import utilities
+from api_key import API_KEY
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import openai
-from api_key import API_KEY
-import utilities
-import models
 
 openai.api_key = API_KEY
 
@@ -46,7 +46,10 @@ def generate_adventure():
                                         max_tokens=2000)
 
     gpt_json = utilities.convert_response_to_json(response)
-    models.Adventures.adventure_from_response(gpt_json)
+    models.Adventures(gpt_json['AdventureTitle'], gpt_json['AdventureHook'],
+                      gpt_json['AdventurePlot'], gpt_json['AdventureClimax'],
+                      gpt_json['AdventureResolution'],
+                      gpt_json['AdventureNPCs'])
     response = jsonify({"status": "success", "message": gpt_json})
     response.status_code = 201
     return response
