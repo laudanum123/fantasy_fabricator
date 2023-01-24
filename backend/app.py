@@ -38,8 +38,7 @@ def generate_adventure():
         "AdventurePlot": content,\
         "AdventureClimax": content,\
         "AdventureResolution": content,\
-        "AdventureNPCs: content}}\
-    Do not use any new line characters or special characters.'
+        "AdventureNPCs: content}}'\
 
     response = openai.Completion.create(engine="text-davinci-003",
                                         prompt=prompt,
