@@ -1,11 +1,20 @@
 <template>
-  <div>
-    <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :lineNumbers="true" :perPage="10"
-      :search="true" :filter="filter" :sort-icon="sortIcon">
-    </vue-good-table>
+  <div class="container my-5">
+    <h2 class="text-center mb-5 heading">Stored Adventures</h2>
+    <div>
+      <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :lineNumbers="true" :perPage="10"
+        :search="true" :filter="filter" :sort-icon="sortIcon" class="my-table">
+      </vue-good-table>
+    </div>
   </div>
 </template>
-
+<style>
+.my-table {
+  margin-top: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+</style>
 <script>
 import axios from 'axios'
 const backendURL = 'http://localhost:5000';
@@ -20,7 +29,8 @@ export default {
           label: 'Title',
           field: 'AdventureTitle',
           filterable: true,
-          sortable: true
+          sortable: true,
+          template: '<a :href="adventure.AdventureTitle" target="_blank">{{adventure.AdventureTitle}}</a>'
         },
         {
           label: ' Hook',
@@ -28,18 +38,6 @@ export default {
           filterable: true,
           sortable: true
         },
-        {
-          label: 'Plot',
-          field: 'AdventurePlot',
-          filterable: true,
-          sortable: true
-        },
-        {
-          label: 'NPC',
-          field: 'AdventureNPCs',
-          filterable: true,
-          sortable: true
-        }
       ],
       adventures: [],
       filter: true,
