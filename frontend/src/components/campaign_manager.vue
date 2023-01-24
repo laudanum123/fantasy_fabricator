@@ -1,25 +1,58 @@
 <template>
-  <div class="container my-5">
-    <h2 class="text-center mb-5">Campaign Manager</h2>
-    <div class="form-group">
-      <input type="text" class="form-control" v-model="campaignName" placeholder="Enter campaign name">
-    </div>
-    <button class="btn btn-primary" @click="createCampaign()">Create Campaign</button>
+  <div>
+    <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :lineNumbers="true" :perPage="10"
+      :search="true" :filter="filter" :sort-icon="sortIcon">
+    </vue-good-table>
   </div>
 </template>
 
-
 <script>
+import axios from 'axios'
+import VueGoodTable from 'vue-good-table'
+
 export default {
+  components: {
+    VueGoodTable
+  },
   data() {
     return {
-      campaignName: ''
+      columns: [
+        {
+          label: 'Title',
+          field: 'title',
+          filterable: true,
+          sortable: true
+        },
+        {
+          label: 'Setting',
+          field: 'setting',
+          filterable: true,
+          sortable: true
+        },
+        {
+          label: 'Plot',
+          field: 'plot',
+          filterable: true,
+          sortable: true
+        }
+      ],
+      adventures: [],
+      filter: true,
+      sortIcon: {
+        is: 'fa-sort',
+        up: 'fa-sort-up',
+        down: 'fa-sort-down'
+      }
     }
   },
-  methods: {
-    createCampaign() {
-      // Send AJAX request to backend with campaign name
-    }
+  mounted() {
+    axios.get('/api/adventures')
+      .then(response => {
+        this.adventures = response.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 </script>
