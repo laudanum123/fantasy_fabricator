@@ -1,7 +1,7 @@
 """
     This is the main entry point of the application.
 """
-import models
+from models import Adventures
 import openai
 import utilities
 from api_key import API_KEY
@@ -45,13 +45,30 @@ def generate_adventure():
                                         max_tokens=2000)
 
     gpt_json = utilities.convert_response_to_json(response)
-    models.Adventures(gpt_json['AdventureTitle'], gpt_json['AdventureHook'],
-                      gpt_json['AdventurePlot'], gpt_json['AdventureClimax'],
-                      gpt_json['AdventureResolution'],
-                      gpt_json['AdventureNPCs'])
+    adventure = Adventures(gpt_json['AdventureTitle'],
+                           gpt_json['AdventureHook'],
+                           gpt_json['AdventurePlot'],
+                           gpt_json['AdventureClimax'],
+                           gpt_json['AdventureResolution'],
+                           gpt_json['AdventureNPCs'])
+    adventure.save_to_db()
     response = jsonify({"status": "success", "message": gpt_json})
     response.status_code = 201
     return response
+
+
+@app.route('/get_adventures_from_db', methods=['GET'])
+def get_all_adventures_from_db():
+    '''
+    get all adventures from database
+    '''
+
+    all_adventures = Adventures.get_all_adventures()
+    json_adventures = jsonify(all_adventures)
+
+    # reduce to required fields
+
+    return json_adventures
 
 
 if __name__ == '__main__':
