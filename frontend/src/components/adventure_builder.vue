@@ -155,7 +155,7 @@ export default {
       })
         .then(response => {
           console.log(response);
-          this.adventure = JSON.parse(response.data[0].message.choices[0].text.replace(/[^\x20-\x7E]+/g, ''));
+          this.adventure = response.data.message;
         })
         .catch(error => {
           console.log(error);
