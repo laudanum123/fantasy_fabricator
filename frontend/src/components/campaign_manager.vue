@@ -8,30 +8,35 @@
 
 <script>
 import axios from 'axios'
-import VueGoodTable from 'vue-good-table'
+const backendURL = 'http://localhost:5000';
 
 export default {
   components: {
-    VueGoodTable
   },
   data() {
     return {
       columns: [
         {
           label: 'Title',
-          field: 'title',
+          field: 'AdventureTitle',
           filterable: true,
           sortable: true
         },
         {
-          label: 'Setting',
-          field: 'setting',
+          label: ' Hook',
+          field: 'AdventureHook',
           filterable: true,
           sortable: true
         },
         {
           label: 'Plot',
-          field: 'plot',
+          field: 'AdventurePlot',
+          filterable: true,
+          sortable: true
+        },
+        {
+          label: 'NPC',
+          field: 'AdventureNPCs',
           filterable: true,
           sortable: true
         }
@@ -46,9 +51,17 @@ export default {
     }
   },
   mounted() {
-    axios.get('/api/adventures')
+    const path = `${backendURL}/get_adventures_from_db`;
+    axios.get(path)
       .then(response => {
-        this.adventures = response.data
+        this.adventures = response.data.map(adventure => {
+          return {
+            'AdventureTitle': adventure.AdventureTitle,
+            'AdventureHook': adventure.AdventureHook,
+            'AdventureNPCs': adventure.AdventureNPCs,
+            'AdventurePlot': adventure.AdventurePlot,
+          }
+        });
       })
       .catch(error => {
         console.log(error)
