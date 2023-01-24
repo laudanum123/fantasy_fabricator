@@ -1,7 +1,7 @@
 '''This file contains the models for the database'''
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 engine = create_engine('sqlite:///fantasy_fabricator.db')
 
@@ -28,6 +28,9 @@ class Adventures(Base):
         self.adventure_climax = adventure_climax
         self.adventure_resolution = adventure_resolution
         self.adventure_npcs = adventure_npcs
+        session = Session()
+        session.add(self)
+        session.commit()
 
     def __repr__(self):
         return f'<Adventure {self.adventure_title}>'
@@ -50,3 +53,4 @@ class AdventureNPCs(Base):
 
 
 Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)

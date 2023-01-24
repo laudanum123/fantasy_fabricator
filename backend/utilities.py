@@ -10,6 +10,7 @@ def convert_response_to_json(response):
     '''
     gpt_text = response['choices'][0]['text']
     gpt_text_clean = re.sub(r'[^\x20-\x7E]+', '', gpt_text)
+    print(gpt_text_clean)
     gpt_json = json.loads(gpt_text_clean)
     return gpt_json
 

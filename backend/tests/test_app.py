@@ -1,12 +1,14 @@
 '''Tests for app.py'''
 import json
 from unittest.mock import patch
-from app import app
+
 import utilities
+from app import app
 
 
+@patch('models.Adventures')
 @patch('openai.Completion.create')
-def test_generate_adventure(mock_create):
+def test_generate_adventure(mock_create, _):
     '''Tests generate_adventure route'''
     # set up mock response
     mock_response = {
@@ -17,7 +19,7 @@ def test_generate_adventure(mock_create):
         "created":
         1620000000,
         "model":
-        "davinci:2020-05-03",
+        "davinci003",
         "choices": [{
             "text": """{
         "AdventureTitle": "The Lost Temple",
@@ -56,6 +58,7 @@ def test_generate_adventure(mock_create):
     response = client.post('/generate_adventure',
                            data=json.dumps(test_data),
                            content_type='application/json')
+
     data = json.loads(response.get_data())
 
     # assert response
