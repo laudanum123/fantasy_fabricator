@@ -107,30 +107,7 @@
   </transition>
 </template>
 <style>
-label {
-  font-weight: bold;
-  text-align: right;
-}
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.heading {
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-.card-body {
-  font-size: 1.2rem;
-  font-weight: 400;
-}
 </style>
 <script>
 import axios from 'axios';
