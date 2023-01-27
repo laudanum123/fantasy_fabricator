@@ -2,8 +2,8 @@
   <div class="container my-5">
     <h2 class="text-center mb-5 heading">Stored Adventures</h2>
     <div>
-      <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :lineNumbers="true" :perPage="10"
-        :search="true" :filter="filter" :sort-icon="sortIcon" class="my-table">
+      <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :perPage="10" :search="true"
+        :filter="filter" :sort-icon="sortIcon" class="my-table" v-on:row-click="onRowClick">
       </vue-good-table>
     </div>
   </div>
@@ -16,6 +16,7 @@
 }
 </style>
 <script>
+import router from '@/router';
 import axios from 'axios'
 const backendURL = 'http://localhost:5000';
 
@@ -26,11 +27,16 @@ export default {
     return {
       columns: [
         {
+          label: 'ID',
+          field: 'AdventureID',
+          filterable: true,
+          sortable: true
+        },
+        {
           label: 'Title',
           field: 'AdventureTitle',
           filterable: true,
-          sortable: true,
-          template: '<a :href="adventure.AdventureTitle" target="_blank">{{adventure.AdventureTitle}}</a>'
+          sortable: true
         },
         {
           label: ' Hook',
@@ -54,6 +60,7 @@ export default {
       .then(response => {
         this.adventures = response.data.map(adventure => {
           return {
+            'AdventureID': adventure.id,
             'AdventureTitle': adventure.AdventureTitle,
             'AdventureHook': adventure.AdventureHook,
             'AdventureNPCs': adventure.AdventureNPCs,
@@ -64,6 +71,11 @@ export default {
       .catch(error => {
         console.log(error)
       })
+  },
+  methods: {
+    onRowClick(params) {
+      router.push({ path: '/AdventureView', query: { id: params.row['AdventureID'] } })
+    }
   }
 }
 </script>

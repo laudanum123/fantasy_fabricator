@@ -34,17 +34,21 @@ class Adventures(Base):
         return f'<Adventure {self.adventure_title}>'
 
     @staticmethod
-    def get_all_adventures() -> list:
+    def get_adventures(adventure_id=None) -> list:
         """Get all adventures from database
 
         Returns:
             list: list containing all adventures
         """
         session = Session()
-        db_adventures = session.query(Adventures).all()
+        if adventure_id:
+            db_adventures = session.query(Adventures).filter_by(id=adventure_id)
+        else:
+            db_adventures = session.query(Adventures).all()
         adventures = []
         for adventure in db_adventures:
             adventures.append({
+                'id': adventure.id,
                 'AdventureTitle': adventure.adventure_title,
                 'AdventureHook': adventure.adventure_hook,
                 'AdventurePlot': adventure.adventure_plot,

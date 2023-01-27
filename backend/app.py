@@ -58,13 +58,17 @@ def generate_adventure():
 
 
 @app.route('/get_adventures_from_db', methods=['GET'])
-def get_all_adventures_from_db():
+def get_adventures_from_db():
     '''
-    get all adventures from database
+    get all or single adventure(s) from database
     '''
+    if request.args.get('id'):
+        adventure_id = request.args.get('id')
+        adventures = Adventures.get_adventures(adventure_id)
+    else:
+        adventures = Adventures.get_adventures()
 
-    all_adventures = Adventures.get_all_adventures()
-    json_adventures = jsonify(all_adventures)
+    json_adventures = jsonify(adventures)
 
     # reduce to required fields
 

@@ -6,6 +6,7 @@ import Community_Support from '../components/community_support.vue'
 import Encounter_Builder from '../components/encounter_builder.vue'
 import Map_Generator from '../components/map_generator.vue'
 import Landing_Page from '../components/landing_page.vue'
+import AdventureView from '../views/AdventureView.vue'
 
 const routes = [
   {
@@ -17,6 +18,11 @@ const routes = [
     path: '/adventure_builder',
     name: 'adventure builder',
     component: AdventureBuilder
+  },
+  {
+    path: '/adventureView',
+    name: 'adventure view',
+    component: AdventureView
   },
   {
     path: '/campaign_manager',
