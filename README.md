@@ -42,17 +42,18 @@ API_KEY = 'YOUR-OPENAI-API-KEY'
 # Make sure to add this file to .gitignore if you plan on contributing
 ```
 
-4. Start the development server
+4. Install the spacy named entity package
+```sh
+python -m spacy download en_core_web_sm
+```
+
+5. Start the development server
 ```sh
 cd frontend/ 
 npm run serve
 ```
 ```sh
 python backend/app.py
-```
-5. Install the spacy named entity package
-```sh
-python -m spacy download en_core_web_sm
 ```
 
 6. Open http://localhost:8080 in your browser to see the application.
