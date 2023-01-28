@@ -50,8 +50,12 @@ npm run serve
 ```sh
 python backend/app.py
 ```
+5. Install the spacy named entity package
+```sh
+python -m spacy download en_core_web_sm
+```
 
-4. Open http://localhost:8080 in your browser to see the application.
+6. Open http://localhost:8080 in your browser to see the application.
 
 ## Built With
 - Vue.js - The Progressive JavaScript Framework
