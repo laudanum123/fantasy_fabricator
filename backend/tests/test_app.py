@@ -1,14 +1,26 @@
 '''Tests for app.py'''
 import json
 from unittest.mock import patch
-
+import pytest
 import utilities
 from app import app
 
 
-@patch('models.Adventures')
+@pytest.fixture
+def client():
+    """create a db client for the tests
+
+    Yields:
+        client: db client
+    """
+    app.config['TESTING'] = True
+    db_client = app.test_client()
+    yield db_client
+
+
+@patch('sqlalchemy.orm.session.sessionmaker')
 @patch('openai.Completion.create')
-def test_generate_adventure(mock_create, _):
+def test_generate_adventure(mock_create, mock_save, client):
     '''Tests generate_adventure route'''
     # set up mock response
     mock_response = {
@@ -46,12 +58,15 @@ def test_generate_adventure(mock_create, _):
     mock_create.return_value = mock_response
 
     # set up test client
-    client = app.test_client()
 
     # set up test data
     test_data = {
-        "adventureTitle": "The Lost Temple",
-        "adventureSetting": "Medieval Fantasy"
+        "adventureTitle":
+        "The Lost Temple",
+        "adventureSetting":
+        "Medieval Fantasy",
+        "adventurePlot":
+        "The players must find a way to stop an ancient evil from being unleashed."
     }
 
     # send request
@@ -63,4 +78,17 @@ def test_generate_adventure(mock_create, _):
 
     # assert response
     assert response.status_code == 201
-    assert data['message'] == utilities.convert_response_to_json(mock_response)
+    assert data['message'] == utilities.clean_gpt_response(
+        mock_response["choices"][0]["text"])
+
+
+def test_get_adventures_from_db(client):
+    """tests get_adventures_from_db route
+
+    Args:
+        client (_type_): _description_
+    """
+
+    response = client.get('/get_adventures_from_db')
+    assert response.status_code == 200
+    assert len(json.loads(response.data)) > 0
