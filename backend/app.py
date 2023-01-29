@@ -103,5 +103,20 @@ def get_adventures_from_db():
     return response
 
 
+@app.route('/delete_adventures_from_db', methods=['DELETE'])
+def delete_adventures_from_db():
+    '''
+    delete adventure(s) from database
+    '''
+    print(request.json)
+    if request.json:
+        adventure_ids = request.json['ids']
+        Adventures.delete_adventures(adventure_ids)
+
+    response = jsonify({"status": "success", "message": "adventure deleted"})
+    response.status_code = 204
+    return response
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
