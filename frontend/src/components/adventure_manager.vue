@@ -2,8 +2,8 @@
   <div class="container my-5">
     <h2 class="text-center mb-5 heading">Stored Adventures</h2>
     <div>
-      <vue-good-table :columns="columns" :rows="adventures" :paginate="true" :perPage="10" :search="true"
-        :filter="filter" :sort-icon="sortIcon" class="my-table" v-on:row-click="onRowClick">
+      <vue-good-table :columns="columns" :rows="adventures" :pagination-options="{enabled: true, mode:'records', perPage: 10}"
+      :search-options="{enabled:true}" class="my-table" v-on:row-click="onRowClick">
       </vue-good-table>
     </div>
   </div>
