@@ -11,8 +11,8 @@
                     <li class="nav-item" :class="{ 'bg-secondary': $route.path === '/adventure_builder' }">
                         <router-link to="/adventure_builder" class="nav-link">Adventure Builder</router-link>
                     </li>
-                    <li class="nav-item" :class="{ 'bg-secondary': $route.path === '/campaign_manager' }">
-                        <router-link to="/campaign_manager" class="nav-link">Campaign Manager</router-link>
+                    <li class="nav-item" :class="{ 'bg-secondary': $route.path === '/adventure_manager' }">
+                        <router-link to="/adventure_manager" class="nav-link">Adventure Manager</router-link>
                     </li>
                     <li class="nav-item" :class="{ 'bg-secondary': $route.path === '/character_generator' }">
                         <router-link to="/character_generator" class="nav-link">Character Generator</router-link>

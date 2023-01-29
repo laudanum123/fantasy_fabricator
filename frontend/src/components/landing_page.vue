@@ -18,7 +18,7 @@
           <div class="card-body">
             <h5 class="card-title">Create Adventures</h5>
             <p class="card-text">Use GPT-3 to generate unique and exciting adventure ideas.</p>
-            <router-link to="/adventures" class="btn btn-primary">Create Adventure</router-link>
+            <router-link to="/adventure_builder" class="btn btn-primary">Create Adventure</router-link>
           </div>
         </div>
       </div>
@@ -27,7 +27,7 @@
           <div class="card-body">
             <h5 class="card-title">Create Characters</h5>
             <p class="card-text">Use GPT-3 to generate detailed and compelling characters.</p>
-            <router-link to="/characters" class="btn btn-primary">Create Character</router-link>
+            <router-link to="/character_generator" class="btn btn-primary">Create Character</router-link>
           </div>
         </div>
       </div>
@@ -36,7 +36,7 @@
           <div class="card-body">
             <h5 class="card-title">Create Enemies</h5>
             <p class="card-text">Use GPT-3 to generate terrifying and challenging enemies.</p>
-            <router-link to="/enemies" class="btn btn-primary">Create Enemy</router-link>
+            <router-link to="/encounter_builder" class="btn btn-primary">Create Enemy</router-link>
           </div>
         </div>
       </div>
@@ -45,10 +45,10 @@
       <div class="col-md-4">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Campaign Manager</h5>
-            <p class="card-text">Manage and organize your campaigns, keep track of characters, and plan out adventures.
+            <h5 class="card-title">Adventure Manager</h5>
+            <p class="card-text">Manage and organize your Adventures, keep track of characters, and plan out adventures.
             </p>
-            <router-link to="/campaigns" class="btn btn-primary">Manage Campaigns</router-link>
+            <router-link to="/adventure_manager" class="btn btn-primary">Manage Adventures</router-link>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@
           <div class="card-body">
             <h5 class="card-title">Map Generator</h5>
             <p class="card-text">Use GPT-3 to generate detailed and unique maps for your campaigns.</p>
-            <router-link to="/maps" class="btn btn-primary">Create Map</router-link>
+            <router-link to="/map_generator" class="btn btn-primary">Create Map</router-link>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
           <div class="card-body">
             <h5 class="card-title">Community Support</h5>
             <p class="card-text">Connect with other Dungeon Masters and get tips and support.</p>
-            <router-link to="/community" class="btn btn-primary">Join Community</router-link>
+            <router-link to="/community_support" class="btn btn-primary">Join Community</router-link>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@
             <div class="col-md-8">
                 <div class="d-flex justify-content-between">
                     <h2 class="text-center">{{ adventure.AdventureTitle }}</h2>
-                    <router-link :to="{ name: 'campaign manager' }" class="btn btn-primary">Back to
+                    <router-link :to="{ name: 'adventure manager' }" class="btn btn-primary">Back to
                         Overview</router-link>
                 </div>
                 <hr>

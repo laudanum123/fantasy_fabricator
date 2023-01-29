@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import AdventureBuilder from '../components/adventure_builder.vue'
-import CampaignManager from '../components/campaign_manager.vue'
+import AdventureManager from '../components/adventure_manager.vue'
 import CharacterGenerator from '../components/character_generator.vue'
 import Community_Support from '../components/community_support.vue'
 import Encounter_Builder from '../components/encounter_builder.vue'
@@ -25,9 +25,9 @@ const routes = [
     component: AdventureView
   },
   {
-    path: '/campaign_manager',
-    name: 'campaign manager',
-    component: CampaignManager
+    path: '/adventure_manager',
+    name: 'adventure manager',
+    component: AdventureManager
   },
   {
     path: '/character_generator',
