@@ -1,12 +1,11 @@
 '''This file contains the models for the database'''
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 
 engine = create_engine('sqlite:///fantasy_fabricator.db')
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
-Base.metadata.create_all(engine)
 
 
 class Adventures(Base):
@@ -20,6 +19,9 @@ class Adventures(Base):
     adventure_climax = Column(String)
     adventure_resolution = Column(String)
     adventure_npcs = Column(String)
+    entities = relationship("Entities",
+                            back_populates="adventure",
+                            foreign_keys="Entities.adventure_id")
 
     def __init__(self, adventure_title, adventure_hook, adventure_plot,
                  adventure_climax, adventure_resolution, adventure_npcs):
@@ -31,7 +33,7 @@ class Adventures(Base):
         self.adventure_npcs = adventure_npcs
 
     def __repr__(self) -> str:
-        return f'<Adventure {self.adventure_title}>'
+        return f'<Adventures {self.adventure_title}>'
 
     @staticmethod
     def get_adventures(adventure_id=None) -> list:
@@ -58,11 +60,25 @@ class Adventures(Base):
             })
         return adventures
 
-    def save_to_db(self):
-        """Save adventure to database"""
-        session = Session()
-        session.add(self)
-        session.commit()
+
+class Entities(Base):
+    """Model for Named Entities recognized in adventure text
+
+    Args:
+        Base (Base): Parent Class
+
+    Returns:
+        Entity: Object of Class Entity
+    """
+    __tablename__ = 'entities'
+    id = Column(Integer, primary_key=True)
+    entity_name = Column(String(255))
+    adventure_id = Column(Integer, ForeignKey('adventures.id'))
+    adventure = relationship("Adventures", back_populates="entities")
+
+    def __init__(self, entity_name, adventure_id):
+        self.entity_name = entity_name
+        self.adventure_id = adventure_id
 
 
 class AdventureNPCs(Base):
@@ -78,4 +94,6 @@ class AdventureNPCs(Base):
         self.npc_name = npc_name
 
     def __repr__(self):
-        return f'<Adventure_NPC {self.npc_name}>'
+        return f'<Adventure_NPCs {self.npc_name}>'
+
+Base.metadata.create_all(engine)
