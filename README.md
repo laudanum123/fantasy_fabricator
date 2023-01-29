@@ -5,11 +5,14 @@ A tool to help you create and manage your adventures, characters, and enemies wi
 
 ## Features
 - Adventure Builder: Generate unique and exciting adventure ideas.
+- Adventure Manager: View and Delete created Adventures
+
+## In Progress Features
+- Automatically identify named entities in your adventure to act as a basis for creation of NPC, location, enemy backstories and Stats
 
 ## Planned Features
 - NPC Generator: Generate detailed and compelling characters.
 - Enemy Generator: Generate terrifying and challenging enemies.
-- Campaign Manager: Keep track of your campaigns and adventures.
 - Map Generator: Create detailed and immersive maps.
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
