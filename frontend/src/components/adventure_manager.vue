@@ -93,17 +93,26 @@ export default {
   },
   methods: {
     onView(params) {
-      console.log(params)
       router.push({ path: '/AdventureView', query: { id: params['AdventureID'] } })
     },
     onDelete() {
-      // Add code to delete the row here
+      const ids = this.selection.selectedRows.map(row => row['AdventureID']);
+      const path = `${backendURL}/delete_adventures_from_db`;
+      console.log(ids);
+      axios.delete(path, { data: { ids: ids } })
+        .then(response => {
+          this.adventures = this.adventures.filter(adventure => {
+            return !ids.includes(adventure['AdventureID'])
+          });
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
+
     selectionChanged(selectedRows) {
-      console.log(selectedRows)
       this.selection = selectedRows
-      console.log(this.selection.selectedRows.length)
-      //console.log(this.$refs['my-table'].selectedRows)
     }
   }
 }

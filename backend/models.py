@@ -60,6 +60,19 @@ class Adventures(Base):
             })
         return adventures
 
+    @staticmethod
+    def delete_adventures(adventure_ids: list) -> None:
+        """Delete adventure(s) from database
+
+        Args:
+            adventure_id (int, optional): ID of adventure to delete. Defaults to None.
+        """
+        session = Session()
+        if adventure_ids:
+            adventures = session.query(Adventures).filter(Adventures.id.in_(adventure_ids))
+            print(adventures)
+            adventures.delete(synchronize_session=False)
+            session.commit()
 
 class Entities(Base):
     """Model for Named Entities recognized in adventure text
