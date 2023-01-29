@@ -65,9 +65,11 @@ def generate_adventure():
             session.commit()
 
         # extract named entities from adventure
-        combined_texts = [gpt_json['AdventureHook'], gpt_json['AdventurePlot'],
-        gpt_json['AdventureClimax'], gpt_json['AdventureResolution'],
-        gpt_json['AdventureNPCs']]
+        combined_texts = [
+            gpt_json['AdventureHook'], gpt_json['AdventurePlot'],
+            gpt_json['AdventureClimax'], gpt_json['AdventureResolution'],
+            gpt_json['AdventureNPCs']
+        ]
         corpus = ' '.join(combined_texts)
         entities = utilities.extract_named_entities(corpus)
         print(entities)
