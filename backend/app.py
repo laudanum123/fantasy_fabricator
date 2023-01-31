@@ -102,6 +102,23 @@ def get_adventures_from_db():
     response.status_code = 200
     return response
 
+@app.route('/get_entities_from_db', methods=['GET'])
+def get_entities_from_db():
+    '''
+    get all or single entity(ies) from database
+    '''
+    if request.args.get('id'):
+        adventure_id = request.args.get('id')
+        entities = Entities.get_entities(adventure_id=adventure_id)
+    else:
+        entities = Entities.get_entities()
+
+    response = jsonify(entities)
+
+    # reduce to required fields
+    response.status_code = 200
+    return response
+
 
 @app.route('/delete_adventures_from_db', methods=['DELETE'])
 def delete_adventures_from_db():
