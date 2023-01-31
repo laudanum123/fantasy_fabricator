@@ -93,6 +93,27 @@ class Entities(Base):
         self.entity_name = entity_name
         self.adventure_id = adventure_id
 
+    def __repr__(self) -> str:
+        return f'<Entities {self.entity_name}>'
+
+    @staticmethod
+    def get_entities(adventure_id: int) -> list:
+        """Get all entities from database
+
+        Returns:
+            list: list containing all entities
+        """
+        session = Session()
+        db_entities = session.query(Entities).filter_by(adventure_id=adventure_id)
+        entities = []
+        for entity in db_entities:
+            entities.append({
+                'id': entity.id,
+                'entity_name': entity.entity_name,
+                'adventure_id': entity.adventure_id
+            })
+        return entities
+
 
 class AdventureNPCs(Base):
     '''This class contains the model for the adventure_npcs table'''
