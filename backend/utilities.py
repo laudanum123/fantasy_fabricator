@@ -5,7 +5,7 @@ import openai
 import requests
 from spacy.tokenizer import Tokenizer
 import spacy
-from backend.models import Adventures
+from models import Adventures
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -114,9 +114,9 @@ def extract_entities_from_adventure(id):
     Entities refer to all NPCs (non-player character) and locations.\
     NPCs include but not limited to: Any character mentioned in the story such as NPCs, side characters,players,characters and living beings\
     Locations include but not limited to: Any location mentioned in the RPG story such as Forest,Desert,River,Oceans,Temple\
-    Format the answer as a json object with the following stucture:\
-    {{  "NPCs": NPC content,\
-        "Locations": Locations content }}'
+    Format the answer as a json object with the following stucture with a value of type "list":\
+    {{  "NPCs": [NPC content],\
+        "Locations": [Locations content] }}'
 
     response = openai.Completion.create(engine="text-davinci-003",
                              prompt= prompt,
@@ -124,9 +124,14 @@ def extract_entities_from_adventure(id):
 
     text = response['choices'][0]['text']
 
-    print(json.loads(text))
+    npc_loc_json =  json.loads(text)
 
-    return text
+    npc = npc_loc_json.get("NPCs")
+    locations = npc_loc_json.get("Locations")
 
 
-print(atestaa1(6))
+    return npc,locations
+
+
+
+
