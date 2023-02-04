@@ -63,17 +63,38 @@ export default {
     data() {
         return {
             adventure: null,
+            NPCs: null
+        }
+    },
+    methods: {
+        getDb() {
+            const path = `${backendURL}/get_adventures_from_db`;
+            axios.get(path, { params: { id: this.$route.query.id } })
+                .then(response => {
+                    console.log(response)
+                    this.adventure = response.data[0];
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        getNpc() {
+            const path = `${backendURL}/get_NPCs_from_db`;
+            axios.get(path, { params: { id: this.$route.query.id } })
+                .then(response => {
+                    console.log(response)
+                    this.NPCs = response.data;
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     },
     mounted() {
-        const path = `${backendURL}/get_adventures_from_db`;
-        axios.get(path, { params: { id: this.$route.query.id } })
-            .then(response => {
-                this.adventure = response.data[0];
-            })
-            .catch(error => {
-                console.log(error)
-            })
+
+        this.getDb()
+        this.getNpc()
+
     }
 }
 </script>
