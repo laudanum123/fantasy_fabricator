@@ -2,8 +2,10 @@
 import json
 import re
 import openai
+import requests
 from spacy.tokenizer import Tokenizer
 import spacy
+from backend.models import Adventures
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -98,3 +100,33 @@ def verify_gpt_response_keys(response_string: str) -> str:
         new_response = new_response + "}"
 
     return new_response
+
+
+def extract_entities_from_adventure(id):
+
+    adventures = Adventures.get_adventures(id)[0]
+    adventures.pop("id", None)
+
+    # join all the values of the dictionary into one string
+    corpus = ' '.join(adventures.values())
+    prompt = f'Given the following RPG story: {corpus}.\
+    Extract all entities. \
+    Entities refer to all NPCs (non-player character) and locations.\
+    NPCs include but not limited to: Any character mentioned in the story such as NPCs, side characters,players,characters and living beings\
+    Locations include but not limited to: Any location mentioned in the RPG story such as Forest,Desert,River,Oceans,Temple\
+    Format the answer as a json object with the following stucture:\
+    {{  "NPCs": NPC content,\
+        "Locations": Locations content }}'
+
+    response = openai.Completion.create(engine="text-davinci-003",
+                             prompt= prompt,
+                             max_tokens=2000)
+
+    text = response['choices'][0]['text']
+
+    print(json.loads(text))
+
+    return text
+
+
+print(atestaa1(6))
