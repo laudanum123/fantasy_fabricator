@@ -118,5 +118,13 @@ def delete_adventures_from_db():
     return response
 
 
+@app.route('/extract_entities/<id>', methods=['POST'])
+def extract_entities(id):
+    json_test = f"{id}:test"
+
+    return jsonify(json_test)
+
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
