@@ -102,11 +102,42 @@ class AdventureNPCs(Base):
     adventure_id = Column(Integer, ForeignKey('adventures.id'))
     npc_name = Column(String)
 
+    @staticmethod
+    def get_NPCS(adventure_id) -> list:
+        """Get all NPCs from adventure
+
+        Returns:
+            list: list containing all adventures
+        """
+        session = Session()
+        db_NPC = session.query(AdventureNPCs).filter_by(adventure_id=adventure_id)
+
+        npc_list = []
+        for NPC in db_NPC:
+            npc_list.append(NPC.npc_name)
+
+        return npc_list
     def __init__(self, adventure_id, npc_name):
         self.adventure_id = adventure_id
         self.npc_name = npc_name
 
     def __repr__(self):
         return f'<Adventure_NPCs {self.npc_name}>'
+
+
+class AdventureLocations(Base):
+    '''This class contains the model for the adventure_npcs table'''
+    __tablename__ = 'adventure_locations'
+
+    id = Column(Integer, primary_key=True)
+    adventure_id = Column(Integer, ForeignKey('adventures.id'))
+    location_name = Column(String)
+
+    def __init__(self, adventure_id, location_name):
+        self.adventure_id = adventure_id
+        self.location_name = location_name
+
+    def __repr__(self):
+        return f'<Adventure_NPCs {self.location_name}>'
 
 Base.metadata.create_all(engine)
