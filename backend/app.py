@@ -1,7 +1,7 @@
 """
     This is the main entry point of the application.
 """
-from models import Adventures, Entities
+from models import Adventures, Entities,AdventureNPCs,AdventureLocations
 import models
 import openai
 import utilities
@@ -120,11 +120,39 @@ def delete_adventures_from_db():
 
 @app.route('/extract_entities/<id>', methods=['POST'])
 def extract_entities(id):
-    json_test = f"{id}:test"
-
-    return jsonify(json_test)
 
 
+    npc_list,locations_list = utilities.extract_entities_from_adventure(id)
+
+    session = sessionmaker(bind=engine)
+    with session() as session:
+        for npc in npc_list:
+            npc = AdventureNPCs(id,npc)
+            if not app.config['TESTING']:
+                session.add(npc)
+                session.commit()
+
+        for location in locations_list:
+            location = AdventureLocations(id,location)
+            if not app.config['TESTING']:
+                session.add(location)
+                session.commit()
+
+    return jsonify(locations_list)
+
+@app.route('/get_NPCs_from_db', methods=['GET'])
+def get_NPCs_from_db():
+    '''
+    get all or single adventure(s) from database
+    '''
+    adventure_id = request.args.get('id')
+    npc = AdventureNPCs.get_NPCS(adventure_id)
+
+    response = jsonify(npc)
+
+    # reduce to required fields
+    response.status_code = 200
+    return response
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
