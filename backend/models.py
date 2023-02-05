@@ -107,7 +107,7 @@ class AdventureNPCs(Base):
         """Get all NPCs from adventure
 
         Returns:
-            list: list containing all adventures
+            list: list containing all NPCs
         """
         session = Session()
         db_NPC = session.query(AdventureNPCs).filter_by(adventure_id=adventure_id)
@@ -132,6 +132,22 @@ class AdventureLocations(Base):
     id = Column(Integer, primary_key=True)
     adventure_id = Column(Integer, ForeignKey('adventures.id'))
     location_name = Column(String)
+
+    @staticmethod
+    def get_locations(adventure_id) -> list:
+        """Get all locations from adventure
+
+        Returns:
+            list: list containing all locations
+        """
+        session = Session()
+        db_locations = session.query(AdventureLocations).filter_by(adventure_id=adventure_id)
+
+        locations_list = []
+        for locations in db_locations:
+            locations_list.append(locations.npc_name)
+
+        return locations_list
 
     def __init__(self, adventure_id, location_name):
         self.adventure_id = adventure_id
