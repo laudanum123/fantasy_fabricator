@@ -121,7 +121,6 @@ def delete_adventures_from_db():
 @app.route('/extract_entities/<id>', methods=['POST'])
 def extract_entities(id):
 
-
     npc_list,locations_list = utilities.extract_entities_from_adventure(id)
 
     session = sessionmaker(bind=engine)
@@ -138,12 +137,15 @@ def extract_entities(id):
                 session.add(location)
                 session.commit()
 
-    return jsonify(locations_list)
+    response = jsonify({"status": "success", "message": [npc_list,locations_list]})
+    response.status_code = 201
+
+    return response
 
 @app.route('/get_NPCs_from_db', methods=['GET'])
 def get_NPCs_from_db():
     '''
-    get all or single adventure(s) from database
+    get NPCs from database
     '''
     adventure_id = request.args.get('id')
     npc = AdventureNPCs.get_NPCS(adventure_id)
@@ -153,6 +155,22 @@ def get_NPCs_from_db():
     # reduce to required fields
     response.status_code = 200
     return response
+
+@app.route('/get_locations_from_db', methods=['GET'])
+def get_locations_from_db():
+    '''
+    get locations from database
+    '''
+    adventure_id = request.args.get('id')
+
+    npc = AdventureLocations.get_locations(adventure_id)
+
+    response = jsonify(npc)
+
+    # reduce to required fields
+    response.status_code = 200
+    return response
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
