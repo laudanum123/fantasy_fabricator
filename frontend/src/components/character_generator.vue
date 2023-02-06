@@ -29,8 +29,8 @@
       </div>
       <div class="form-group d-flex my-2">
         <ul v-if="searchTerm.length > 1">
-          <li v-for="title in filteredTitles.slice(0, 1)" :key="title" @click="selectTitle(title)"
-            class="list-group-item list-group-item-action">{{ title }}</li>
+          <li v-for="adventure in filteredTitles.slice(0, 1)" :key="adventure" @click="selectTitle(adventure)"
+            class="list-group-item list-group-item-action">{{ adventure.title }}</li>
         </ul>
       </div>
       <button class="btn btn-primary my-3" @click="generateCharacter">Generate Character</button>
@@ -59,23 +59,30 @@ export default {
       selectedSystem: 'D&D',
       customSystem: '',
       character: null,
-      adventureTitles: ["Lost Mines of Phandelver",
-        "Tyranny of Dragons",
-        "Hoard of the Dragon Queen",
-        "The Rise of Tiamat",
-        "Storm King's Thunder",
-        "Tomb of Annihilation",
-        "Waterdeep: Dragon Heist",
-        "Icewind Dale: Rime of the Frostmaiden",
-        "The Wild Beyond the Witchlight"
-      ],
+      adventureTitles: [],
       searchTerm: '',
-      selectedTitle: ''
+      selectedId: ''
     }
+  },
+  mounted() {
+    const path = `${backendURL}/get_adventures_from_db`;
+    axios.get(path)
+      .then(response => {
+        this.adventureTitles = response.data.map(adventure => {
+          return {
+            'id': adventure.id,
+            'title': adventure.AdventureTitle,
+          }
+        });
+        console.log(this.adventureTitles)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   },
   computed: {
     filteredTitles() {
-      return this.adventureTitles.filter(title => title.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      return this.adventureTitles.filter(adventure => adventure.title.toLowerCase().includes(this.searchTerm.toLowerCase()))
     }
   },
 
@@ -86,7 +93,7 @@ export default {
         characterName: this.characterName,
         selectedSystem: this.selectedSystem,
         customSystem: this.customSystem,
-        adventureTitle: this.selectedTitle
+        adventureId: this.selectedId
       })
         .then(response => {
           console.log(response);
@@ -100,9 +107,10 @@ export default {
           console.log(error);
         });
     },
-    selectTitle(title) {
-      this.searchTerm = title
-      this.selectedTitle = title
+    selectTitle(adventure) {
+      this.searchTerm = adventure.title
+      this.selectedId = adventure.id
+
       this.$nextTick(() => {
         let ul = document.querySelector('ul')
         ul.remove()
