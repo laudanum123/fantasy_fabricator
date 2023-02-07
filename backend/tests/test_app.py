@@ -3,7 +3,7 @@ import json
 from unittest.mock import patch
 import pytest
 import utilities
-from app import app
+from backend.app import app
 
 
 @pytest.fixture
