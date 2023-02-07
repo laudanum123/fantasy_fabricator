@@ -12,7 +12,8 @@
         </template>
         <template #table-row="props">
           <span v-if="props.column.field == 'after'" class="d-flex align-items-center">
-            <button class="btn btn-secondary" @click="onView(props.row)">View</button>
+            <button class="btn btn-secondary mx-1" @click="onView(props.row)">View</button>
+            <button class="btn btn-secondary mx-1" @click="onExtract(props.row)">Extract</button>
           </span>
         </template>
       </vue-good-table>
@@ -73,8 +74,9 @@ export default {
       }
     }
   },
-  mounted() {
-    const path = `${backendURL}/get_adventures_from_db`;
+  methods: {
+    getDb(){
+      const path = `${backendURL}/get_adventures_from_db`;
     axios.get(path)
       .then(response => {
         this.adventures = response.data.map(adventure => {
@@ -90,22 +92,26 @@ export default {
       .catch(error => {
         console.log(error)
       })
-  },
-  methods: {
+    },
     onView(params) {
       router.push({ path: '/AdventureView', query: { id: params['AdventureID'] } })
+    },
+    onExtract(row_id){
+      const path = `${backendURL}/extract_entities/${row_id.AdventureID}`;
+    axios.post(path)
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
     },
     onDelete() {
       const ids = this.selection.selectedRows.map(row => row['AdventureID']);
       const path = `${backendURL}/delete_adventures_from_db`;
       console.log(ids);
       axios.delete(path, { data: { ids: ids } })
-        .then(response => {
-          this.adventures = this.adventures.filter(adventure => {
-            return !ids.includes(adventure['AdventureID'])
-          });
-          console.log(response)
-        })
+        .then(this.getDb)
         .catch(error => {
           console.log(error);
         });
@@ -114,6 +120,9 @@ export default {
     selectionChanged(selectedRows) {
       this.selection = selectedRows
     }
+  },
+mounted() {
+    this.getDb();
   }
 }
 </script>

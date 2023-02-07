@@ -2,10 +2,7 @@
 import json
 import re
 import openai
-from spacy.tokenizer import Tokenizer
-import spacy
 
-nlp = spacy.load('en_core_web_sm')
 
 
 def query_gpt_api(prompt):
@@ -17,21 +14,6 @@ def query_gpt_api(prompt):
                                         max_tokens=2000)
     return response
 
-
-def extract_named_entities(text: str) -> list:
-    '''
-    extract named entities from text using Spacy
-    '''
-    tokenizer = Tokenizer(nlp.vocab)
-    doc = tokenizer(text)
-    doc = nlp(doc)
-    entities = []
-    pattern = re.compile(r'[^a-zA-Z0-9\s]+')
-    for ent in doc.ents:
-        if ent.label_ in ['PERSON', 'GPE', 'WORK_OF_ART', 'LOC', 'ORG', 'NORP', 'FAC']:
-            # remove special characters and append to list
-            entities.append(pattern.sub('',ent.text))
-    return entities
 
 
 def clean_gpt_response(gpt_response: str) -> dict:
@@ -98,3 +80,38 @@ def verify_gpt_response_keys(response_string: str) -> str:
         new_response = new_response + "}"
 
     return new_response
+
+
+def extract_entities_from_adventure(adventure):
+
+    adventure.pop("id", None)
+
+    # join all the values of the dictionary into one string
+    corpus = ' '.join(adventure.values())
+    prompt = f'Given the following RPG story: {corpus}.\
+    Extract all entities. \
+    Entities refer to all NPCs (non-player character) and locations.\
+    NPCs include but not limited to: Any character mentioned in the story such as NPCs, side characters,players,characters and living beings\
+    Locations include but not limited to: Any location mentioned in the RPG story such as Forest,Desert,River,Oceans,Temple. \
+    The extacted content should exactly string match was is present in the story. \
+    Format the answer as a json object with the following stucture with a value of type "list":\
+    {{  "NPCs": [NPC content],\
+        "Locations": [Locations content] }}'
+
+    response = openai.Completion.create(engine="text-davinci-003",
+                             prompt= prompt,
+                             max_tokens=2000)
+
+    text = response['choices'][0]['text']
+
+    npc_loc_json =  json.loads(text)
+
+    npc = npc_loc_json.get("NPCs")
+    locations = npc_loc_json.get("Locations")
+
+
+    return npc,locations
+
+
+
+
