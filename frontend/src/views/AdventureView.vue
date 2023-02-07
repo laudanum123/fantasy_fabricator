@@ -117,7 +117,7 @@ export default {
       this.adventure = adventure;
     }
   },
-  mounted() {
+  mounted() { // add locations method to retrieve all locations from db
     this.getDb()
       .then(() => this.getNpc())
       .then(() => this.highlightEntities())
