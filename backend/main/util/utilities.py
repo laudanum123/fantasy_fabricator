@@ -2,12 +2,7 @@
 import json
 import re
 import openai
-import requests
-from spacy.tokenizer import Tokenizer
-import spacy
-from models import Adventures
 
-nlp = spacy.load('en_core_web_sm')
 
 
 def query_gpt_api(prompt):
@@ -19,21 +14,6 @@ def query_gpt_api(prompt):
                                         max_tokens=2000)
     return response
 
-
-def extract_named_entities(text: str) -> list:
-    '''
-    extract named entities from text using Spacy
-    '''
-    tokenizer = Tokenizer(nlp.vocab)
-    doc = tokenizer(text)
-    doc = nlp(doc)
-    entities = []
-    pattern = re.compile(r'[^a-zA-Z0-9\s]+')
-    for ent in doc.ents:
-        if ent.label_ in ['PERSON', 'GPE', 'WORK_OF_ART', 'LOC', 'ORG', 'NORP', 'FAC']:
-            # remove special characters and append to list
-            entities.append(pattern.sub('',ent.text))
-    return entities
 
 
 def clean_gpt_response(gpt_response: str) -> dict:
@@ -102,13 +82,12 @@ def verify_gpt_response_keys(response_string: str) -> str:
     return new_response
 
 
-def extract_entities_from_adventure(id):
+def extract_entities_from_adventure(adventure):
 
-    adventures = Adventures.get_adventures(id)[0]
-    adventures.pop("id", None)
+    adventure.pop("id", None)
 
     # join all the values of the dictionary into one string
-    corpus = ' '.join(adventures.values())
+    corpus = ' '.join(adventure.values())
     prompt = f'Given the following RPG story: {corpus}.\
     Extract all entities. \
     Entities refer to all NPCs (non-player character) and locations.\
