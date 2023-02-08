@@ -117,15 +117,19 @@ def extract_entities(id):
 
     npc_list,locations_list = utilities.extract_entities_from_adventure(adventure)
 
-    for npc in npc_list: #TODO try except block to catch duplicated while still passing new entities extracted
-        npc = AdventureNPCs(adventure_id=id, npc_name=npc)
-        db.session.add(npc)
-        db.session.commit()
+    for npc in npc_list:
+        npc_obj = AdventureNPCs.query.filter_by(adventure_id=id, npc_name=npc).first()
+        if not npc_obj:
+            npc_obj = AdventureNPCs(adventure_id=id, npc_name=npc)
+            db.session.add(npc_obj)
 
     for location in locations_list:
-        location = AdventureLocations(adventure_id=id, location_name=location)
-        db.session.add(location)
-        db.session.commit()
+        location_obj = AdventureLocations.query.filter_by(adventure_id=id, location_name=location).first()
+        if not location_obj:
+            location_obj = AdventureLocations(adventure_id=id, location_name=location)
+            db.session.add(location_obj)
+
+    db.session.commit()
 
     response = jsonify({"status": "success", "message": [npc_list,locations_list]})
     response.status_code = 201
@@ -147,7 +151,7 @@ def get_NPCs_from_db():
     response.status_code = 200
     return response
 
-@routes.route('/get_locations_from_db', methods=['GET']) #TODO, consume from frontend Vue
+@routes.route('/get_locations_from_db', methods=['GET'])
 def get_locations_from_db():
     '''
     get locations from database

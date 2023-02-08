@@ -59,13 +59,13 @@
 <script>
 import axios from 'axios';
 import { reactive } from 'vue';
-import { reactive } from 'vue';
 const backendURL = 'http://localhost:5000';
 export default {
   data() {
     return {
       adventure: null,
-      NPCs: null
+      NPCs: null,
+      locations: null
     }
   },
   methods: {
@@ -91,6 +91,17 @@ export default {
           console.log(error)
         })
     },
+    getLocations() {
+      const path = `${backendURL}/get_locations_from_db`;
+      return axios.get(path, { params: { id: this.$route.query.id } })
+        .then(response => {
+          // console.log(response)
+          this.locations = response.data;
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     highlightEntities() {
       // iterate through adventure components and highlight named entities
       const adventureComponents = [
@@ -106,13 +117,20 @@ export default {
         // console.log(component)
         // console.log(index)
         let highlightedText = component;
-        this.NPCs.forEach((entity) => {
+        this.NPCs.forEach((entity) => { // loop over NPCs
           const link = `<a href="/npc?id=${entity}">${entity}</a>`;
           console.log(entity)
           console.log(link)
           highlightedText = highlightedText.replace(new RegExp(entity, "gi"), link); // g: global,i: case-insensitive
           console.log(highlightedText.includes(entity))
         });
+        // this.locations.forEach((entity) => { // loop over locations #currently clashes with NPCs highlighted text
+        //   const link = `<a href="/npc?id=${entity}">${entity}</a>`;
+        //   console.log(entity)
+        //   console.log(link)
+        //   highlightedText = highlightedText.replace(new RegExp(entity, "gi"), link); // g: global,i: case-insensitive
+        //   console.log(highlightedText.includes(entity))
+        // });
         adventure[keys[index]] = highlightedText;
       });
       this.adventure = adventure;
@@ -121,6 +139,7 @@ export default {
   mounted() { // add locations method to retrieve all locations from db
     this.getDb()
       .then(() => this.getNpc())
+      .then(() => this.getLocations())
       .then(() => this.highlightEntities())
       .catch(error => {
         console.log(error)
