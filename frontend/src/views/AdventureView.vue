@@ -59,7 +59,6 @@
 <script>
 import axios from 'axios';
 import { reactive } from 'vue';
-import { reactive } from 'vue';
 const backendURL = 'http://localhost:5000';
 export default {
   data() {
