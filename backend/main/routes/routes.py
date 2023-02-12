@@ -1,18 +1,22 @@
 import openai
 from main.util.api_key import API_KEY
-from flask import Blueprint,request,jsonify
+from flask import Blueprint, request, jsonify
 from main import db
-from main.models import Adventures,Entities,AdventureNPCs,AdventureLocations
+from main.models import Adventures, Entities, AdventureNPCs, AdventureLocations
 from main.util import utilities
 
-routes = Blueprint('routes',__name__)
+routes = Blueprint("routes", __name__)
 
 openai.api_key = API_KEY
-@routes.route('/generate_adventure', methods=['POST']) ## occasional error: raise JSONDecodeError("Expecting value", s, err.value) from None json.decoder.JSONDecodeError: Expecting value: line 1 column 21 (char 20)
+
+
+@routes.route(
+    "/generate_adventure", methods=["POST"]
+)  ## occasional error: raise JSONDecodeError("Expecting value", s, err.value) from None json.decoder.JSONDecodeError: Expecting value: line 1 column 21 (char 20)
 def generate_adventure():
-    '''
+    """
     create adventure based on user input using GPT-3 and return the result
-    '''
+    """
 
     message_body = request.json
 
@@ -34,36 +38,39 @@ def generate_adventure():
         "AdventurePlot": content,\
         "AdventureClimax": content,\
         "AdventureResolution": content,\
-        "AdventureNPCs": content}}'\
+        "AdventureNPCs": content}}'
+    response = openai.Completion.create(
+        engine="text-davinci-003", prompt=prompt, max_tokens=2000
+    )
 
-    response = openai.Completion.create(engine="text-davinci-003",
-                                        prompt=prompt,
-                                        max_tokens=2000)
-
-    gpt_json = utilities.clean_gpt_response(response['choices'][0]['text'])
+    gpt_json = utilities.clean_gpt_response(response["choices"][0]["text"])
 
     # create adventure object for new adventure
-    adventure = Adventures(adventure_title = gpt_json['AdventureTitle'],
-                           adventure_hook = gpt_json['AdventureHook'],
-                           adventure_plot = gpt_json['AdventurePlot'],
-                           adventure_climax = gpt_json['AdventureClimax'],
-                           adventure_resolution = gpt_json['AdventureResolution'],
-                           adventure_npcs = gpt_json['AdventureNPCs'])
+    adventure = Adventures(
+        adventure_title=gpt_json["AdventureTitle"],
+        adventure_hook=gpt_json["AdventureHook"],
+        adventure_plot=gpt_json["AdventurePlot"],
+        adventure_climax=gpt_json["AdventureClimax"],
+        adventure_resolution=gpt_json["AdventureResolution"],
+        adventure_npcs=gpt_json["AdventureNPCs"],
+    )
 
     db.session.add(adventure)
     db.session.commit()
 
     # extract named entities from adventure
     combined_texts = [
-        gpt_json['AdventureHook'], gpt_json['AdventurePlot'],
-        gpt_json['AdventureClimax'], gpt_json['AdventureResolution'],
-        gpt_json['AdventureNPCs']
+        gpt_json["AdventureHook"],
+        gpt_json["AdventurePlot"],
+        gpt_json["AdventureClimax"],
+        gpt_json["AdventureResolution"],
+        gpt_json["AdventureNPCs"],
     ]
-    corpus = ' '.join(combined_texts)
+    corpus = " ".join(combined_texts)
     entities = utilities.extract_named_entities(corpus)
     print(entities)
     for entity in entities:
-        entity = Entities(entity_name = entity,adventure_id = adventure.id)
+        entity = Entities(entity_name=entity, adventure_id=adventure.id)
         db.session.add(entity)
         db.session.commit()
 
@@ -73,16 +80,14 @@ def generate_adventure():
     return response
 
 
-
-
-@routes.route('/get_adventures_from_db', methods=['GET'])
+@routes.route("/get_adventures_from_db", methods=["GET"])
 def get_adventures_from_db():
-    '''
+    """
     get all or single adventure(s) from database
-    '''
+    """
 
-    if request.args.get('id'):
-        adventure_id = request.args.get('id')
+    if request.args.get("id"):
+        adventure_id = request.args.get("id")
         adventures = Adventures.get_adventures(adventure_id)
     else:
         adventures = Adventures.get_adventures()
@@ -94,15 +99,15 @@ def get_adventures_from_db():
     return response
 
 
-@routes.route('/delete_adventures_from_db', methods=['DELETE'])
+@routes.route("/delete_adventures_from_db", methods=["DELETE"])
 def delete_adventures_from_db():
-    '''
+    """
     delete adventure(s) from database
-    '''
+    """
 
     print(request.json)
     if request.json:
-        adventure_ids = request.json['ids']
+        adventure_ids = request.json["ids"]
         Adventures.delete_adventures(adventure_ids)
 
     response = jsonify({"status": "success", "message": "adventure deleted"})
@@ -110,12 +115,12 @@ def delete_adventures_from_db():
     return response
 
 
-@routes.route('/extract_entities/<id>', methods=['POST'])
+@routes.route("/extract_entities/<id>", methods=["POST"])
 def extract_entities(id):
 
     adventure = Adventures.get_adventures(id)[0]
 
-    npc_list,locations_list = utilities.extract_entities_from_adventure(adventure)
+    npc_list, locations_list = utilities.extract_entities_from_adventure(adventure)
 
     for npc in npc_list:
         npc_obj = AdventureNPCs.query.filter_by(adventure_id=id, npc_name=npc).first()
@@ -124,25 +129,28 @@ def extract_entities(id):
             db.session.add(npc_obj)
 
     for location in locations_list:
-        location_obj = AdventureLocations.query.filter_by(adventure_id=id, location_name=location).first()
+        location_obj = AdventureLocations.query.filter_by(
+            adventure_id=id, location_name=location
+        ).first()
         if not location_obj:
             location_obj = AdventureLocations(adventure_id=id, location_name=location)
             db.session.add(location_obj)
 
     db.session.commit()
 
-    response = jsonify({"status": "success", "message": [npc_list,locations_list]})
+    response = jsonify({"status": "success", "message": [npc_list, locations_list]})
     response.status_code = 201
 
     return response
 
-@routes.route('/get_NPCs_from_db', methods=['GET'])
-def get_NPCs_from_db():
-    '''
-    get NPCs from database
-    '''
 
-    adventure_id = request.args.get('id')
+@routes.route("/get_NPCs_from_db", methods=["GET"])
+def get_NPCs_from_db():
+    """
+    get NPCs from database
+    """
+
+    adventure_id = request.args.get("id")
     npc = AdventureNPCs.get_NPCs(adventure_id)
 
     response = jsonify(npc)
@@ -151,14 +159,14 @@ def get_NPCs_from_db():
     response.status_code = 200
     return response
 
-@routes.route('/get_locations_from_db', methods=['GET'])
+
+@routes.route("/get_locations_from_db", methods=["GET"])
 def get_locations_from_db():
-    '''
+    """
     get locations from database
-    '''
+    """
 
-
-    adventure_id = request.args.get('id')
+    adventure_id = request.args.get("id")
 
     npc = AdventureLocations.get_locations(adventure_id)
 
@@ -166,4 +174,48 @@ def get_locations_from_db():
 
     # reduce to required fields
     response.status_code = 200
+    return response
+
+
+@routes.route("/generate_npc", methods=["POST"])
+def generate_npc():
+    """Create a new NPC for an Adventure using GPT-3 and return the result"""
+    print(len(request.json))
+    print(request.json)
+    if request.json["adventureId"] == "":
+        return "Please provide adventure id", 400
+
+    npc = {}
+    npc["name"] = request.json["characterName"]
+    npc["game_system"] = request.json["selectedSystem"]
+    npc["adventure_id"] = request.json["adventureId"]
+
+    if npc["game_system"] == "Define other":
+        npc["game_system"] = request.json["custom_system"]
+
+    adventure = Adventures.get_adventures(npc["adventure_id"])[0]
+    print(adventure)
+    prompt = f'You are a professional writer of RPG Adventures who is tasked with\
+    creating an background and game stats for Non Player Characters. \
+    The NPC is called {npc["name"]} and is supposed to be\
+    set in a {npc["game_system"]} setting. The background of the NPC should be compatible with\
+    the following adventure: {adventure["AdventureHook"]} . {adventure["AdventurePlot"]}.\
+    {adventure["AdventureClimax"]}.{adventure["AdventureResolution"]}.\
+    Please use the above structure and use a minimum of 1000 words for your answer.\
+    Format the answer as a json object with the following stucture. The NPCStats should use the common Statblock format of the respective game system:\
+    {{  "NPCBackground": content,\
+        "NPCStats": content,\
+        }}'
+    gpt_response = openai.Completion.create(
+        engine="text-davinci-003", prompt=prompt, max_tokens=3000
+    )
+
+    print(gpt_response)
+    npc = AdventureNPCs(npc, gpt_response)
+    if not app.config["TESTING"]:
+        db.session.add(npc)
+        db.session.commit()
+
+    response = jsonify({"status": "success", "message": npc.to_dict()})
+    response.status_code = 201
     return response

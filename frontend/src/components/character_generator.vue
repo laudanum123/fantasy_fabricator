@@ -3,6 +3,15 @@
     <h2 class="text-center mb-5">Character Generator</h2>
     <form>
       <div class="form-group d-flex my-2">
+        <label for="adventure-title" class="w-25"
+          style="margin-right: 1rem; display: inline-block; line-height: 2.5;">Adventure Title:</label>
+        <select class="form-control w-75" id="adventure-title" v-model="selectedId">
+          <option value="">-- Select Adventure Title --</option>
+          <option v-for="adventure in adventureTitles" :key="adventure.id" :value="adventure.id">{{ adventure.title }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group d-flex my-2">
         <label for="character-name" class="w-25"
           style="margin-right: 1rem; display: inline-block; line-height: 2.5;">Character Name:</label>
         <input type="text" class="form-control w-75" id="character-name" v-model="characterName"
@@ -22,22 +31,20 @@
           placeholder="Enter your own game system">
       </div>
       <div class="form-group d-flex my-2">
-        <label for="adventure-title" class="w-25"
-          style="margin-right: 1rem; display: inline-block; line-height: 2.5;">Adventure Title:</label>
-        <input type="text" class="form-control w-75" id="adventure-title" v-model="searchTerm"
-          placeholder="Enter Adventure Title" @input="handleAdventureTitleInput" @keydown.enter="selectTitle(title)">
+        <label for="game-system-version" class="w-25"
+          style="margin-right: 1rem; display: inline-block; line-height: 2.5;">
+          Edition:</label>
+        <select class="form-control w-75" id="game-system-version" v-model="selectedSystemVersion"
+          style="text-align: center;">
+          <option v-for="version in gameSystemVersions" :key="version" :value="version">{{ version }}</option>
+        </select>
       </div>
-      <div class="form-group d-flex my-2">
-        <ul v-if="searchTerm.length > 1">
-          <li v-for="adventure in filteredTitles.slice(0, 1)" :key="adventure" @click="selectTitle(adventure)"
-            class="list-group-item list-group-item-action">{{ adventure.title }}</li>
-        </ul>
-      </div>
+
       <button class="btn btn-primary my-3" @click="generateCharacter">Generate Character</button>
     </form>
     <div class="card mt-5" v-if="character">
       <div class="card-header">
-        {{ character.name }}
+
       </div>
       <div class="card-body">
         <h5 class="card-title">Background</h5>
@@ -57,6 +64,24 @@ export default {
       characterName: '',
       gameSystems: ['D&D', 'Pathfinder', 'Shadowrun', 'GURPS', 'World of Darkness', 'Call of Cthulhu', 'Fate', 'Savage Worlds', 'Starfinder', 'RuneQuest', 'HeroQuest', 'Ars Magica', 'Numenera', 'Define other'],
       selectedSystem: 'D&D',
+      gameSystemVersions: [1, 2, 3, 4, 5],
+      gameSystemVersionMap: {
+        'D&D': [1, 2, 3, 4, 5],
+        'Pathfinder': [1, 2],
+        'Shadowrun': [5, 6],
+        'GURPS': [4],
+        'World of Darkness': ['20th', 'Revised'],
+        'Call of Cthulhu': [1, 2, 3, 4, 5, 5.5, 5.6, 6, 7],
+        'Fate': ["Accelerated", "Condensed", "Atomic Robo", "The Dresden Files", "Fate of Cthulhu", "Core"],
+        'Savage Worlds': ['Explorer’s Edition', 'Deluxe Edition', 'Adventure Edition'],
+        'Starfinder': ['Alien Archive', 'Pact Worlds', 'Armory', 'Original', 'Core Rolebook'],
+        'RuneQuest': [1, 2, 3, 4, 5, 6, 'Glorantha', 'Mythras'],
+        'HeroQuest': [1, 2, 'Glorantha'],
+        'Ars Magica': [1, 2, 3, 4, 5],
+        'Numenera': ['Discovery', 'Destiny', 'Core Rulebook']
+        // Add the other systems here
+      },
+      selectedSystemVersion: '5',
       customSystem: '',
       character: null,
       adventureTitles: [],
@@ -80,11 +105,6 @@ export default {
         console.log(error)
       })
   },
-  computed: {
-    filteredTitles() {
-      return this.adventureTitles.filter(adventure => adventure.title.toLowerCase().includes(this.searchTerm.toLowerCase()))
-    }
-  },
 
   methods: {
     generateCharacter() {
@@ -107,15 +127,12 @@ export default {
           console.log(error);
         });
     },
-    selectTitle(adventure) {
-      this.searchTerm = adventure.title
-      this.selectedId = adventure.id
-
-      this.$nextTick(() => {
-        let ul = document.querySelector('ul')
-        ul.remove()
-      })
+  },
+  watch: {
+    selectedSystem(newSystem) {
+      this.gameSystemVersions = this.gameSystemVersionMap[newSystem];
+      this.selectedSystemVersion = this.gameSystemVersions[this.gameSystemVersions.length - 1];
     }
-  }
+  },
 }
 </script>
