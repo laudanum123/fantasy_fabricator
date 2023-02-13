@@ -113,14 +113,15 @@ export default {
         characterName: this.characterName,
         selectedSystem: this.selectedSystem,
         customSystem: this.customSystem,
-        adventureId: this.selectedId
+        adventureId: this.selectedId,
+        selectedSystemVersion: this.selectedSystemVersion
       })
         .then(response => {
           console.log(response);
           this.character = {
             name: this.characterName,
-            background: 'Generated Background',
-            stats: 'Generated Stats'
+            background: response.data.message,
+            stats: response.data.message
           }
         })
         .catch(error => {

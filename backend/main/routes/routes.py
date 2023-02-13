@@ -1,9 +1,10 @@
 import openai
-from main.util.api_key import API_KEY
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
 from main import db
-from main.models import Adventures, Entities, AdventureNPCs, AdventureLocations
+from main.models import AdventureLocations, AdventureNPCs, Adventures, Entities
 from main.util import utilities
+from main.util.api_key import API_KEY
+import json
 
 routes = Blueprint("routes", __name__)
 
@@ -42,8 +43,17 @@ def generate_adventure():
     response = openai.Completion.create(
         engine="text-davinci-003", prompt=prompt, max_tokens=2000
     )
-
-    gpt_json = utilities.clean_gpt_response(response["choices"][0]["text"])
+    expected_keys = [
+        "AdventureTitle",
+        "AdventureHook",
+        "AdventurePlot",
+        "AdventureClimax",
+        "AdventureResolution",
+        "AdventureNPCs",
+    ]
+    gpt_json = utilities.clean_gpt_response(
+        response["choices"][0]["text"], expected_keys
+    )
 
     # create adventure object for new adventure
     adventure = Adventures(
@@ -58,16 +68,9 @@ def generate_adventure():
     db.session.add(adventure)
     db.session.commit()
 
+    adventure = Adventures.get_adventures(adventure.id)[0]
     # extract named entities from adventure
-    combined_texts = [
-        gpt_json["AdventureHook"],
-        gpt_json["AdventurePlot"],
-        gpt_json["AdventureClimax"],
-        gpt_json["AdventureResolution"],
-        gpt_json["AdventureNPCs"],
-    ]
-    corpus = " ".join(combined_texts)
-    entities = utilities.extract_named_entities(corpus)
+    entities = utilities.extract_entities_from_adventure(adventure)
     print(entities)
     for entity in entities:
         entity = Entities(entity_name=entity, adventure_id=adventure.id)
@@ -189,6 +192,7 @@ def generate_npc():
     npc["name"] = request.json["characterName"]
     npc["game_system"] = request.json["selectedSystem"]
     npc["adventure_id"] = request.json["adventureId"]
+    npc["game_system_version"] = request.json["selectedSystemVersion"]
 
     if npc["game_system"] == "Define other":
         npc["game_system"] = request.json["custom_system"]
@@ -198,7 +202,7 @@ def generate_npc():
     prompt = f'You are a professional writer of RPG Adventures who is tasked with\
     creating an background and game stats for Non Player Characters. \
     The NPC is called {npc["name"]} and is supposed to be\
-    set in a {npc["game_system"]} setting. The background of the NPC should be compatible with\
+    set in a {npc["game_system"]} {npc["game_system_version"]} setting. The background of the NPC should be compatible with\
     the following adventure: {adventure["AdventureHook"]} . {adventure["AdventurePlot"]}.\
     {adventure["AdventureClimax"]}.{adventure["AdventureResolution"]}.\
     Please use the above structure and use a minimum of 1000 words for your answer.\
@@ -209,13 +213,18 @@ def generate_npc():
     gpt_response = openai.Completion.create(
         engine="text-davinci-003", prompt=prompt, max_tokens=3000
     )
+    gpt_response_text = gpt_response["choices"][0]["text"]
 
-    print(gpt_response)
-    npc = AdventureNPCs(npc, gpt_response)
+    gpt_response_text = utilities.clean_gpt_response(
+        gpt_response_text, expected_keys=["NPCBackground", "NPCStats"]
+    )
+
+    npc = AdventureNPCs(npc, gpt_response_text)
+
     if not app.config["TESTING"]:
         db.session.add(npc)
         db.session.commit()
 
-    response = jsonify({"status": "success", "message": npc.to_dict()})
+    response = jsonify({"status": "success", "message": gpt_response_text})
     response.status_code = 201
     return response
