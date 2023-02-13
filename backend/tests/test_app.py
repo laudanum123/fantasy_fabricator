@@ -2,8 +2,8 @@
 import json
 from unittest.mock import patch
 import pytest
-import utilities
-from backend.app import app
+from main.util import utilities
+from main import app
 
 
 @pytest.fixture
