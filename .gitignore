@@ -4,3 +4,5 @@ prompts.txt
 .envrc
 *__pycache__/
 fantasy_fabricator.db
+backend/.coverage
+.coverage
