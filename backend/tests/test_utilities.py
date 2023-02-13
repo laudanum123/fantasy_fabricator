@@ -2,7 +2,7 @@ import json
 from unittest.mock import patch
 import re
 import pytest
-from utilities import (extract_named_entities,
+from main.util.utilities import (extract_entities_from_adventure,
                        query_gpt_api, verify_gpt_response_keys)
 
 
