@@ -8,55 +8,27 @@
             Overview</router-link>
         </div>
         <hr>
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Adventure Hook</h4>
-            <p class="card-text" v-html="adventure.AdventureHook"></p>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Adventure NPCs</h4>
-            <p class="card-text" v-html="adventure.AdventureNPCs"></p>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Adventure Plot</h4>
-            <p class="card-text" v-html="adventure.AdventurePlot"></p>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Adventure Climax</h4>
-            <p class="card-text" v-html="adventure.AdventureClimax"></p>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Adventure Resolution</h4>
-            <p class="card-text" v-html="adventure.AdventureResolution"></p>
-          </div>
-        </div>
+        <MyCard title="Adventure Hook">
+            <div v-html="adventure.AdventureHook"></div>
+          </MyCard>
+          <MyCard title="Adventure NPCs">
+            <div v-html="adventure.AdventureNPCs"></div>
+          </MyCard>
+          <MyCard title="Adventure Plot">
+            <div v-html="adventure.AdventurePlot"></div>
+          </MyCard>
+          <MyCard title="Adventure Climax">
+            <div v-html="adventure.AdventureClimax"></div>
+          </MyCard>
+          <MyCard title="Adventure Resolution">
+            <div v-html="adventure.AdventureResolution"></div>
+          </MyCard>
       </div>
     </div>
   </div>
 </template>
-<style scoped>
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-}
-
-.card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-}
-</style>
 <script>
+import MyCard from '../components/Cards/AdventureView Card.vue';
 import axios from 'axios';
 import { reactive } from 'vue';
 const backendURL = 'http://localhost:5000';
@@ -67,6 +39,9 @@ export default {
       NPCs: null,
       locations: null
     }
+  },
+  components: {
+    MyCard
   },
   methods: {
     getDb() {
