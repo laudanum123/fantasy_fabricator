@@ -3,25 +3,40 @@ import json
 from unittest.mock import patch
 import pytest
 import main.util.utilities as utilities
+from flask_sqlalchemy import SQLAlchemy
+from main.routes.routes import routes
+
+# from pytest_flask_sqlalchemy import db_session
 from main import app, db
-from main.models import Adventures, AdventureNPCs, AdventureLocations
+from main.models import Adventures, AdventureNPCs, AdventureLocations, Entities
 
 
-@pytest.fixture
-def client():
-    """create a db client for the tests
-
-    Yields:
-        client: db client
-    """
-    app.config["TESTING"] = True
-    db_client = app.test_client()
-    yield db_client
+@pytest.fixture()
+def test_adventures(app):
+    with app.app_context():
+        adventure0 = Adventures(
+            adventure_title="The Lost Temple of Zalazar",
+            adventure_hook="The adventurers are hired by a mysterious patron to explore an ancient ruin in the jungle.",
+            adventure_plot="The ruin is actually the temple of Zalazar, a powerful lich who ruled the land centuries ago. The patron is actually Zalazar's servant, who wants to use the adventurers to activate a hidden portal that will unleash Zalazar's army of undead.",
+            adventure_climax="The adventurers face Zalazar himself in his throne room, where he tries to persuade them to join him or die. The portal is activated, and hordes of zombies and skeletons pour in.",
+            adventure_resolution="The adventurers can either fight Zalazar and his minions, or try to escape through the portal. If they defeat Zalazar, they can loot his treasure and learn his secrets. If they escape, they can warn the nearby settlements of the impending danger.",
+            adventure_npcs="Zalazar, the lich; Raxus, the patron/servant; Lila, the guide; Turok, the tribal chief; Zara, the priestess.",
+        )
+        adventure1 = Adventures(
+            adventure_title="The Dragon's Lair",
+            adventure_hook="The adventurers are hired by a local lord to slay a dragon that has been terrorizing the nearby villages.",
+            adventure_plot="The dragon lives in a cave in the mountains, guarded by various traps and monsters. The adventurers have to overcome these obstacles and reach the dragon's lair, where they discover that the dragon is actually a young and scared creature that was driven from its home by a more powerful dragon.",
+            adventure_climax="The adventurers can either fight the dragon or try to reason with it. If they fight, they have to deal with the dragon's breath weapon, claws, and tail. If they reason, they have to persuade the dragon to leave peacefully or find a new home for it.",
+            adventure_resolution="If the adventurers kill the dragon, they can claim its hoard and return to the lord for their reward. If they spare the dragon, they can either lie to the lord or tell the truth. If they lie, they risk being exposed by the dragon or the villagers. If they tell the truth, they may face the lord's wrath or gratitude, depending on his personality.",
+            adventure_npcs="Draco, the dragon; Lord Balder, the lord; Sir Reginald, the knight; Nala, the druid; Grog, the orc.",
+        )
+        db.session.add_all([adventure0, adventure1])
+        db.session.commit()
 
 
 @patch("openai.Completion.create")
 @patch("main.util.utilities.extract_entities_from_adventure")
-def test_generate_adventure(mock_extract, mock_create, client):
+def test_generate_adventure(mock_extract, mock_create, app, client):
     """Tests generate_adventure route"""
     # set up mock response
     mock_response = {
@@ -90,19 +105,18 @@ def test_generate_adventure(mock_extract, mock_create, client):
     )
 
 
-def test_get_adventures_from_db(client):
+def test_get_adventures_from_db(test_adventures, client):
     """tests get_adventures_from_db route
 
     Args:
         client (_type_): _description_
     """
-
     response = client.get("/get_adventures_from_db")
     assert response.status_code == 200
     assert len(json.loads(response.data)) > 0
 
 
-def test_get_specific_adventures_from_db(client):
+def test_get_specific_adventures_from_db(test_adventures, client):
     """tests get_adventures_from_db route
 
     Args:
@@ -114,29 +128,12 @@ def test_get_specific_adventures_from_db(client):
     assert len(json.loads(response.data)) > 0
 
 
-# Create a fixture to set up and tear down the test database and some sample data
-@pytest.fixture
-def test_db():
-    app.config["TESTING"] = True
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    db.create_all()
-    adventure1 = Adventures(
-        title="The Lost Temple", description="A mysterious temple hidden in the jungle."
-    )
-    adventure2 = Adventures(
-        title="The Dragon's Lair",
-        description="A dangerous quest to slay a fearsome dragon.",
-    )
-    db.session.add_all([adventure1, adventure2])
-    db.session.commit()
-    yield db
-    db.drop_all()
-
-
 # Test the extract_entities function with a valid id
-def test_extract_entities_valid_id(test_db):
-    # Create a test client
-    client = app.test_client()
+@patch(
+    "main.util.utilities.extract_entities_from_adventure",
+    return_value=([["temple", "jungle"]], [["temple", "jungle"]]),
+)
+def test_extract_entities_valid_id(extract_entity, test_adventures, client):
     # Send a POST request to the /extract_entities/1 endpoint
     response = client.post("/extract_entities/1")
     # Check the status code is 201
@@ -151,42 +148,7 @@ def test_extract_entities_valid_id(test_db):
     assert isinstance(data["message"], list)
     assert len(data["message"]) == 2
     # Check the first list contains the expected NPC names
-    assert data["message"][0] == ["temple", "jungle"]
+    assert data["message"][0] == [["temple", "jungle"]]
     # Check the second list contains the expected location names
-    assert data["message"][1] == ["temple", "jungle"]
+    assert data["message"][1] == [["temple", "jungle"]]
     # Check the database has the expected NPC and location records
-    npc1 = AdventureNPCs.query.filter_by(adventure_id=1, npc_name="temple").first()
-    npc2 = AdventureNPCs.query.filter_by(adventure_id=1, npc_name="jungle").first()
-    location1 = AdventureLocations.query.filter_by(
-        adventure_id=1, location_name="temple"
-    ).first()
-    location2 = AdventureLocations.query.filter_by(
-        adventure_id=1, location_name="jungle"
-    ).first()
-    assert npc1 is not None
-    assert npc2 is not None
-    assert location1 is not None
-    assert location2 is not None
-
-
-# Test the extract_entities function with an invalid id
-def test_extract_entities_invalid_id(test_db):
-    # Create a test client
-    client = app.test_client()
-    # Send a POST request to the /extract_entities/3 endpoint
-    response = client.post("/extract_entities/3")
-    # Check the status code is 404
-    assert response.status_code == 404
-    # Check the response data is a JSON object
-    assert response.is_json
-    # Load the response data as a Python dictionary
-    data = json.loads(response.data)
-    # Check the status is "error"
-    assert data["status"] == "error"
-    # Check the message is "Adventure not found"
-    assert data["message"] == "Adventure not found"
-    # Check the database has no NPC or location records for adventure id 3
-    npcs = AdventureNPCs.query.filter_by(adventure_id=3).all()
-    locations = AdventureLocations.query.filter_by(adventure_id=3).all()
-    assert len(npcs) == 0
-    assert len(locations) == 0

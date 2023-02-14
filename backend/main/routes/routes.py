@@ -125,22 +125,6 @@ def extract_entities(id):
 
     npc_list, locations_list = utilities.extract_entities_from_adventure(adventure)
 
-    for npc in npc_list:
-        npc_obj = AdventureNPCs.query.filter_by(adventure_id=id, npc_name=npc).first()
-        if not npc_obj:
-            npc_obj = AdventureNPCs(adventure_id=id, npc_name=npc)
-            db.session.add(npc_obj)
-
-    for location in locations_list:
-        location_obj = AdventureLocations.query.filter_by(
-            adventure_id=id, location_name=location
-        ).first()
-        if not location_obj:
-            location_obj = AdventureLocations(adventure_id=id, location_name=location)
-            db.session.add(location_obj)
-
-    db.session.commit()
-
     response = jsonify({"status": "success", "message": [npc_list, locations_list]})
     response.status_code = 201
 
