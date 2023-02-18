@@ -81,8 +81,8 @@ def extract_entities_from_adventure(adventure: list):
     Entities refer to all NPCs (non-player character) and locations.\
     NPCs include but not limited to: Any character mentioned in the story such as NPCs, side characters,players,characters and living beings\
     Locations include but not limited to: Any location mentioned in the RPG story such as Forest,Desert,River,Oceans,Temple. \
-    The extacted content should exactly string match was is present in the story. \
-    Format the answer as a json object with the following stucture with a value of type "list":\
+    The extracted content should exactly string match what is present in the RPG story. \
+    Format the answer as a json object with the following structure with a value of type "list":\
     {{  "NPCs": [NPC content],\
         "Locations": [Locations content] }}'
 
