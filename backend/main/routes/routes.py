@@ -203,7 +203,8 @@ def generate_npc():
         gpt_response_text, expected_keys=["NPCBackground", "NPCStats"]
     )
 
-    npc = AdventureNPCs(npc, gpt_response_text)
+    npc = npc.update(gpt_response_text)
+    npc = AdventureNPCs(npc)
 
     if not app.config["TESTING"]:
         db.session.add(npc)
