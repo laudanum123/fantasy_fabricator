@@ -72,6 +72,7 @@ def verify_gpt_response_keys(response_string: str, expected_keys: list) -> str:
 
 def extract_entities_from_adventure(adventure: list):
 
+    adv_id = adventure["id"]
     adventure.pop("id", None)
 
     # join all the values of the dictionary into one string
@@ -98,17 +99,21 @@ def extract_entities_from_adventure(adventure: list):
     locations_list = npc_loc_json.get("Locations")
 
     for npc in npc_list:
-        npc_obj = AdventureNPCs.query.filter_by(adventure_id=id, npc_name=npc).first()
+        npc_obj = AdventureNPCs.query.filter_by(
+            adventure_id=adv_id, npc_name=npc
+        ).first()
         if not npc_obj:
-            npc_obj = AdventureNPCs(adventure_id=id, npc_name=npc)
+            npc_obj = AdventureNPCs(adventure_id=adv_id, npc_name=npc)
             db.session.add(npc_obj)
 
     for location in locations_list:
         location_obj = AdventureLocations.query.filter_by(
-            adventure_id=id, location_name=location
+            adventure_id=adv_id, location_name=location
         ).first()
         if not location_obj:
-            location_obj = AdventureLocations(adventure_id=id, location_name=location)
+            location_obj = AdventureLocations(
+                adventure_id=adv_id, location_name=location
+            )
             db.session.add(location_obj)
 
     db.session.commit()
