@@ -1,10 +1,12 @@
-'''This file contains the models for the database'''
+"""This file contains the models for the database"""
 from sqlalchemy import UniqueConstraint
 
-from main import app,db
+from main import app, db
+
 
 class Adventures(db.Model):
     """This class contains the model for the adventures table"""
+
     id = db.Column(db.Integer, primary_key=True)
     adventure_title = db.Column(db.String)
     adventure_hook = db.Column(db.String)
@@ -12,13 +14,12 @@ class Adventures(db.Model):
     adventure_climax = db.Column(db.String)
     adventure_resolution = db.Column(db.String)
     adventure_npcs = db.Column(db.String)
-    entities = db.relationship("Entities",
-                            back_populates="adventure",
-                            foreign_keys="Entities.adventure_id")
-
+    entities = db.relationship(
+        "Entities", back_populates="adventure", foreign_keys="Entities.adventure_id"
+    )
 
     def __repr__(self) -> str:
-        return f'<Adventures {self.adventure_title}>'
+        return f"<Adventures {self.adventure_title}>"
 
     @staticmethod
     def get_adventures(adventure_id=None) -> list:
@@ -33,15 +34,17 @@ class Adventures(db.Model):
             db_adventures = Adventures.query.all()
         adventures = []
         for adventure in db_adventures:
-            adventures.append({
-                'id': adventure.id,
-                'AdventureTitle': adventure.adventure_title,
-                'AdventureHook': adventure.adventure_hook,
-                'AdventurePlot': adventure.adventure_plot,
-                'AdventureClimax': adventure.adventure_climax,
-                'AdventureResolution': adventure.adventure_resolution,
-                'AdventureNPCs': adventure.adventure_npcs
-            })
+            adventures.append(
+                {
+                    "id": adventure.id,
+                    "AdventureTitle": adventure.adventure_title,
+                    "AdventureHook": adventure.adventure_hook,
+                    "AdventurePlot": adventure.adventure_plot,
+                    "AdventureClimax": adventure.adventure_climax,
+                    "AdventureResolution": adventure.adventure_resolution,
+                    "AdventureNPCs": adventure.adventure_npcs,
+                }
+            )
         return adventures
 
     @staticmethod
@@ -52,8 +55,12 @@ class Adventures(db.Model):
             adventure_id (int, optional): ID of adventure to delete. Defaults to None.
         """
         if adventure_ids:
-            Adventures.query.filter(Adventures.id.in_(adventure_ids)).delete(synchronize_session='fetch')
+            Adventures.query.filter(Adventures.id.in_(adventure_ids)).delete(
+                synchronize_session="fetch"
+            )
             db.session.commit()
+
+
 class Entities(db.Model):
     """Model for Named Entities recognized in adventure text
 
@@ -63,36 +70,52 @@ class Entities(db.Model):
     Returns:
         Entity: Object of Class Entity
     """
+
     id = db.Column(db.Integer, primary_key=True)
     entity_name = db.Column(db.String(255))
-    adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
+    adventure_id = db.Column(db.Integer, db.ForeignKey("adventures.id"))
     adventure = db.relationship("Adventures", back_populates="entities")
 
-class AdventureNPCs(db.Model):
-    '''This class contains the model for the adventure_npcs table'''
-    __tablename__ = 'adventure_npcs'
-    id = db.Column(db.Integer, primary_key=True)
-    adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
-    npc_name = db.Column(db.String)
 
-    __table_args__ = (UniqueConstraint("adventure_id", "npc_name"),) #In order to implement this with an already existing db, need to manually delete table and recreate it
+class AdventureNPCs(db.Model):
+    """This class contains the model for the adventure_npcs table"""
+
+    __tablename__ = "adventure_npcs"
+    id = db.Column(db.Integer, primary_key=True)
+    adventure_id = db.Column(db.Integer, db.ForeignKey("adventures.id"))
+    npc_name = db.Column(db.String)
+    npc_background = db.Column(db.String)
+    npc_stats = db.Column(db.String)
+    npc_game_system = db.Column(db.String)
+
+    __table_args__ = (
+        UniqueConstraint("adventure_id", "npc_name"),
+    )  # In order to implement this with an already existing db, need to manually delete table and recreate it
+
+    def __init__(self, npc_user_input: dict, gpt_response: dict):
+        print(gpt_response)
+        self.adventure_id = npc_user_input["adventure_id"]
+        self.npc_name = npc_user_input["name"]
+        self.game_system = npc_user_input["game_system"]
+        self.npc_stats = gpt_response["NPCStats"]
+        self.npc_background = gpt_response["NPCBackground"]
 
     @staticmethod
     def get_NPCs(adventure_id):
         npcs = AdventureNPCs.query.filter_by(adventure_id=adventure_id).all()
         return [npc.npc_name for npc in npcs]
 
-
     def __repr__(self):
-        return f'<AdventureNPCs {self.npc_name}>'
+        return f"<AdventureNPCs {self.npc_name}>"
+
 
 class AdventureLocations(db.Model):
-    '''This class contains the model for the adventure_npcs table'''
-    __tablename__ = 'adventure_locations'
+    """This class contains the model for the adventure_npcs table"""
 
+    __tablename__ = "adventure_locations"
 
     id = db.Column(db.Integer, primary_key=True)
-    adventure_id = db.Column(db.Integer, db.ForeignKey('adventures.id'))
+    adventure_id = db.Column(db.Integer, db.ForeignKey("adventures.id"))
     location_name = db.Column(db.String)
 
     @staticmethod
@@ -110,9 +133,9 @@ class AdventureLocations(db.Model):
 
         return locations_list
 
-
     def __repr__(self):
-        return f'<AdventureLocation {self.location_name}>'
+        return f"<AdventureLocation {self.location_name}>"
+
 
 with app.app_context():
     db.create_all()
