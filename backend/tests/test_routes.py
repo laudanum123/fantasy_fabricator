@@ -1,6 +1,6 @@
 """Tests for app.py"""
 import json
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import pytest
 import main.util.utilities as utilities
 from flask_sqlalchemy import SQLAlchemy
@@ -152,3 +152,135 @@ def test_extract_entities_valid_id(extract_entity, test_adventures, client):
     # Check the second list contains the expected location names
     assert data["message"][1] == [["temple", "jungle"]]
     # Check the database has the expected NPC and location records
+
+
+def test_delete_adventures_from_db(client):
+    # Create an adventure to delete
+    adventure = Adventures(
+        adventure_title="Test Adventure",
+        adventure_hook="Test Hook",
+        adventure_plot="Test Plot",
+        adventure_climax="Test Climax",
+        adventure_resolution="Test Resolution",
+        adventure_npcs="Test NPCs",
+    )
+    db.session.add(adventure)
+    db.session.commit()
+
+    # Delete the adventure
+    response = client.delete("/delete_adventures_from_db", json={"ids": [adventure.id]})
+    assert response.status_code == 204
+
+    # Check that the adventure was deleted
+    assert Adventures.query.filter_by(id=adventure.id).first() is None
+
+
+def test_get_NPCs_from_db(client):
+    # Create an adventure
+    adventure = Adventures(
+        adventure_title="Test Adventure",
+        adventure_hook="Test Hook",
+        adventure_plot="Test Plot",
+        adventure_climax="Test Climax",
+        adventure_resolution="Test Resolution",
+        adventure_npcs="Test NPCs",
+    )
+    db.session.add(adventure)
+    db.session.commit()
+
+    # Create some NPCs for the adventure
+    npc1 = AdventureNPCs(adventure_id=adventure.id, npc_name="Test NPC 1")
+    npc2 = AdventureNPCs(adventure_id=adventure.id, npc_name="Test NPC 2")
+    db.session.add(npc1)
+    db.session.add(npc2)
+    db.session.commit()
+
+    # Get the NPCs for the adventure
+    response = client.get(f"/get_NPCs_from_db?id={adventure.id}")
+    assert response.status_code == 200
+
+    # Check that the response contains the correct NPCs
+    npc_data = response.get_json()
+    assert len(npc_data) == 2
+    assert "Test NPC 1" in npc_data
+    assert "Test NPC 2" in npc_data
+
+
+def test_get_locations_from_db(client):
+    # Create an adventure
+    adventure = Adventures(
+        adventure_title="Test Adventure",
+        adventure_hook="Test Hook",
+        adventure_plot="Test Plot",
+        adventure_climax="Test Climax",
+        adventure_resolution="Test Resolution",
+        adventure_npcs="Test NPCs",
+    )
+    db.session.add(adventure)
+    db.session.commit()
+
+    # Create some locations for the adventure
+    location1 = AdventureLocations(
+        adventure_id=adventure.id, location_name="Test Location 1"
+    )
+    location2 = AdventureLocations(
+        adventure_id=adventure.id, location_name="Test Location 2"
+    )
+    db.session.add(location1)
+    db.session.add(location2)
+    db.session.commit()
+
+    # Get the locations for the adventure
+    response = client.get(f"/get_locations_from_db?id={adventure.id}")
+    assert response.status_code == 200
+
+    # Check that the response contains the correct locations
+    location_data = response.get_json()
+    assert len(location_data) == 2
+    assert "Test Location 1" in location_data
+    assert "Test Location 2" in location_data
+
+
+@patch("openai.Completion.create")
+def test_generate_npc(mock_create, client, app):
+    mock_response = {
+        "choices": [
+            {"text": '{"NPCBackground": "Background text", "NPCStats": "Stats text"}'}
+        ]
+    }
+    mock_create.return_value = mock_response
+
+    with app.test_client() as client:
+        # Create a test adventure to use as the npc's context
+        adventure = Adventures(
+            adventure_title="Test Adventure",
+            adventure_hook="Test Hook",
+            adventure_plot="Test Plot",
+            adventure_climax="Test Climax",
+            adventure_resolution="Test Resolution",
+            adventure_npcs="[]",
+        )
+        db.session.add(adventure)
+        db.session.commit()
+
+        # Send a request to generate an NPC
+        response = client.post(
+            "/generate_npc",
+            json={
+                "adventureId": adventure.id,
+                "characterName": "Test NPC",
+                "selectedSystem": "D&D 5e",
+                "selectedSystemVersion": "Core",
+                "custom_system": "",
+            },
+        )
+
+        # Check that the response is valid and that the NPC was added to the database
+        assert response.status_code == 201
+        assert response.json == {
+            "status": "success",
+            "message": {"NPCBackground": "Background text", "NPCStats": "Stats text"},
+        }
+        assert AdventureNPCs.query.count() == 1
+        npc = AdventureNPCs.query.first()
+        assert npc.npc_name == "Test NPC"

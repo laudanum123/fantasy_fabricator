@@ -1,6 +1,6 @@
 import openai
 from flask import Blueprint, jsonify, request
-from main import db
+from main import app, db
 from main.models import AdventureLocations, AdventureNPCs, Adventures, Entities
 from main.util import utilities
 from main.util.api_key import API_KEY
@@ -203,8 +203,14 @@ def generate_npc():
         gpt_response_text, expected_keys=["NPCBackground", "NPCStats"]
     )
 
-    npc = npc.update(gpt_response_text)
-    npc = AdventureNPCs(npc)
+    npc.update(gpt_response_text)
+    npc = AdventureNPCs(
+        npc_name=npc["name"],
+        npc_background=npc["NPCBackground"],
+        npc_stats=npc["NPCStats"],
+        adventure_id=npc["adventure_id"],
+        npc_game_system=npc["game_system"],
+    )
 
     if not app.config["TESTING"]:
         db.session.add(npc)
