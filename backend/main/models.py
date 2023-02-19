@@ -12,6 +12,7 @@ class Adventures(db.Model):
     adventure_climax = db.Column(db.String)
     adventure_resolution = db.Column(db.String)
     adventure_npcs = db.Column(db.String)
+    entities_extracted = db.Column(db.Boolean,default = False)
     entities = db.relationship("Entities",
                             back_populates="adventure",
                             foreign_keys="Entities.adventure_id")
@@ -40,7 +41,8 @@ class Adventures(db.Model):
                 'AdventurePlot': adventure.adventure_plot,
                 'AdventureClimax': adventure.adventure_climax,
                 'AdventureResolution': adventure.adventure_resolution,
-                'AdventureNPCs': adventure.adventure_npcs
+                'AdventureNPCs': adventure.adventure_npcs,
+                'EntitiesExtracted':adventure.entities_extracted
             })
         return adventures
 
