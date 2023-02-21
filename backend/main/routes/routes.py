@@ -68,15 +68,6 @@ def generate_adventure():
     db.session.add(adventure)
     db.session.commit()
 
-    adventure = Adventures.get_adventures(adventure.id)[0]
-    # extract named entities from adventure
-    entities = utilities.extract_entities_from_adventure(adventure)
-    print(entities)
-    for entity in entities:
-        entity = Entities(entity_name=entity, adventure_id=adventure.id)
-        db.session.add(entity)
-        db.session.commit()
-
     # return json response
     response = jsonify({"status": "success", "message": gpt_json})
     response.status_code = 201
