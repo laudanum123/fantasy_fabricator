@@ -92,14 +92,6 @@ class AdventureNPCs(db.Model):
         UniqueConstraint("adventure_id", "npc_name"),
     )  # In order to implement this with an already existing db, need to manually delete table and recreate it
 
-    def __init__(self, npc_user_input: dict, gpt_response: dict):
-        print(gpt_response)
-        self.adventure_id = npc_user_input["adventure_id"]
-        self.npc_name = npc_user_input["name"]
-        self.game_system = npc_user_input["game_system"]
-        self.npc_stats = gpt_response["NPCStats"]
-        self.npc_background = gpt_response["NPCBackground"]
-
     @staticmethod
     def get_NPCs(adventure_id):
         npcs = AdventureNPCs.query.filter_by(adventure_id=adventure_id).all()
