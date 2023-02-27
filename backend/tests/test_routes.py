@@ -7,8 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from main.routes.routes import routes
 
 # from pytest_flask_sqlalchemy import db_session
-from main import app, db
-from main.models import Adventures, AdventureNPCs, AdventureLocations, Entities
+from main import db
+from main.models import Adventures, AdventureNPCs, AdventureLocations
 
 
 @pytest.fixture()
@@ -35,9 +35,10 @@ def test_adventures(app):
 
 
 @patch("openai.Completion.create")
-@patch("main.util.utilities.extract_entities_from_adventure")
-def test_generate_adventure(mock_extract, mock_create, app, client):
+def test_generate_adventure(mock_create, app, client):
     """Tests generate_adventure route"""
+    # GIVEN a mocked OpenAI completion API and a Flask test client
+
     # set up mock response
     mock_response = {
         "id": "cmpl-1q2w3e4r5t6y7u8i9o0p",
@@ -71,9 +72,7 @@ def test_generate_adventure(mock_extract, mock_create, app, client):
 
     mock_create.return_value = mock_response
 
-    # set up test client
-
-    # set up test data
+    # WHEN a request is made to the generate_adventure route with test data
     test_data = {
         "adventureTitle": "The Lost Temple",
         "adventureSetting": "Medieval Fantasy",
@@ -89,6 +88,7 @@ def test_generate_adventure(mock_extract, mock_create, app, client):
 
     data = json.loads(response.get_data())
 
+    # THEN the response should have a 201 status code and the expected message
     expected_keys = [
         "AdventureTitle",
         "AdventureHook",
@@ -111,9 +111,13 @@ def test_get_adventures_from_db(test_adventures, client):
     Args:
         client (_type_): _description_
     """
+    # Given two test adventures in the database
+
+    # When the get_adventures_from_db endpoint is accessed
     response = client.get("/get_adventures_from_db")
+    # Then the response should have a status code of 200 and return two adventures
     assert response.status_code == 200
-    assert len(json.loads(response.data)) > 0
+    assert len(json.loads(response.data)) == 2
 
 
 def test_get_specific_adventures_from_db(test_adventures, client):
@@ -122,7 +126,12 @@ def test_get_specific_adventures_from_db(test_adventures, client):
     Args:
         client (_type_): _description_
     """
+    # Given an adventure with id 1 in the database
 
+    # When the get_adventures_from_db endpoint is accessed with id=1
+    response = client.get("/get_adventures_from_db?id=1")
+
+    # Then the response should have a status code of 200
     response = client.get("/get_adventures_from_db?id=1")
     assert response.status_code == 200
     assert len(json.loads(response.data)) > 0
@@ -134,28 +143,39 @@ def test_get_specific_adventures_from_db(test_adventures, client):
     return_value=([["temple", "jungle"]], [["temple", "jungle"]]),
 )
 def test_extract_entities_valid_id(extract_entity, test_adventures, client):
-    # Send a POST request to the /extract_entities/1 endpoint
+    # Given an adventure with id 1 in the database
+
+    # And the extract_entities_from_adventure utility function has been patched
+    # to return the expected NPC and location names
+
+    # When a POST request is sent to the /extract_entities/1 endpoint
     response = client.post("/extract_entities/1")
-    # Check the status code is 201
+
+    # Then the response should have a status code of 201
     assert response.status_code == 201
-    # Check the response data is a JSON object
+
+    # And the response data should be a JSON object
     assert response.is_json
-    # Load the response data as a Python dictionary
+
+    # And the response data should have a "status" key with the value "success"
     data = json.loads(response.data)
-    # Check the status is "success"
     assert data["status"] == "success"
-    # Check the message is a list of two lists
+
+    # And the response data should have a "message" key containing a list of two lists
     assert isinstance(data["message"], list)
     assert len(data["message"]) == 2
-    # Check the first list contains the expected NPC names
+
+    # And the first list in the "message" key should contain the expected NPC names
     assert data["message"][0] == [["temple", "jungle"]]
-    # Check the second list contains the expected location names
+
+    # And the second list in the "message" key should contain the expected location names
     assert data["message"][1] == [["temple", "jungle"]]
+
     # Check the database has the expected NPC and location records
 
 
 def test_delete_adventures_from_db(client):
-    # Create an adventure to delete
+    # Given an existing adventure
     adventure = Adventures(
         adventure_title="Test Adventure",
         adventure_hook="Test Hook",
@@ -167,16 +187,18 @@ def test_delete_adventures_from_db(client):
     db.session.add(adventure)
     db.session.commit()
 
-    # Delete the adventure
+    # When the adventure is deleted
     response = client.delete("/delete_adventures_from_db", json={"ids": [adventure.id]})
+
+    # Then the response status code should be 204
     assert response.status_code == 204
 
-    # Check that the adventure was deleted
+    # And the adventure should no longer be in the database
     assert Adventures.query.filter_by(id=adventure.id).first() is None
 
 
 def test_get_NPCs_from_db(client):
-    # Create an adventure
+    # GIVEN an adventure with NPCs
     adventure = Adventures(
         adventure_title="Test Adventure",
         adventure_hook="Test Hook",
@@ -188,26 +210,26 @@ def test_get_NPCs_from_db(client):
     db.session.add(adventure)
     db.session.commit()
 
-    # Create some NPCs for the adventure
     npc1 = AdventureNPCs(adventure_id=adventure.id, npc_name="Test NPC 1")
     npc2 = AdventureNPCs(adventure_id=adventure.id, npc_name="Test NPC 2")
     db.session.add(npc1)
     db.session.add(npc2)
     db.session.commit()
 
-    # Get the NPCs for the adventure
+    # WHEN the client requests the NPCs for the adventure
     response = client.get(f"/get_NPCs_from_db?id={adventure.id}")
-    assert response.status_code == 200
 
-    # Check that the response contains the correct NPCs
+    # THEN the response should contain the correct NPCs
+    assert response.status_code == 200
     npc_data = response.get_json()
     assert len(npc_data) == 2
     assert "Test NPC 1" in npc_data
     assert "Test NPC 2" in npc_data
 
 
+
 def test_get_locations_from_db(client):
-    # Create an adventure
+    # GIVEN an adventure with two locations
     adventure = Adventures(
         adventure_title="Test Adventure",
         adventure_hook="Test Hook",
@@ -219,7 +241,6 @@ def test_get_locations_from_db(client):
     db.session.add(adventure)
     db.session.commit()
 
-    # Create some locations for the adventure
     location1 = AdventureLocations(
         adventure_id=adventure.id, location_name="Test Location 1"
     )
@@ -230,11 +251,13 @@ def test_get_locations_from_db(client):
     db.session.add(location2)
     db.session.commit()
 
-    # Get the locations for the adventure
+    # WHEN the get_locations_from_db route is called for the adventure
     response = client.get(f"/get_locations_from_db?id={adventure.id}")
+
+    # THEN the response should have a 200 status code
     assert response.status_code == 200
 
-    # Check that the response contains the correct locations
+    # AND the response should contain the correct locations
     location_data = response.get_json()
     assert len(location_data) == 2
     assert "Test Location 1" in location_data
@@ -243,6 +266,7 @@ def test_get_locations_from_db(client):
 
 @patch("openai.Completion.create")
 def test_generate_npc(mock_create, client, app):
+    # Given an adventure and a mocked response from OpenAI
     mock_response = {
         "choices": [
             {"text": '{"NPCBackground": "Background text", "NPCStats": "Stats text"}'}
@@ -250,37 +274,36 @@ def test_generate_npc(mock_create, client, app):
     }
     mock_create.return_value = mock_response
 
-    with app.test_client() as client:
-        # Create a test adventure to use as the npc's context
-        adventure = Adventures(
-            adventure_title="Test Adventure",
-            adventure_hook="Test Hook",
-            adventure_plot="Test Plot",
-            adventure_climax="Test Climax",
-            adventure_resolution="Test Resolution",
-            adventure_npcs="[]",
-        )
-        db.session.add(adventure)
-        db.session.commit()
 
-        # Send a request to generate an NPC
-        response = client.post(
-            "/generate_npc",
-            json={
-                "adventureId": adventure.id,
-                "characterName": "Test NPC",
-                "selectedSystem": "D&D 5e",
-                "selectedSystemVersion": "Core",
-                "custom_system": "",
-            },
-        )
+    adventure = Adventures(
+        adventure_title="Test Adventure",
+        adventure_hook="Test Hook",
+        adventure_plot="Test Plot",
+        adventure_climax="Test Climax",
+        adventure_resolution="Test Resolution",
+        adventure_npcs="[]",
+    )
+    db.session.add(adventure)
+    db.session.commit()
 
-        # Check that the response is valid and that the NPC was added to the database
-        assert response.status_code == 201
-        assert response.json == {
-            "status": "success",
-            "message": {"NPCBackground": "Background text", "NPCStats": "Stats text"},
-        }
-        assert AdventureNPCs.query.count() == 1
-        npc = AdventureNPCs.query.first()
-        assert npc.npc_name == "Test NPC"
+    # When a request is sent to generate an NPC
+    response = client.post(
+        "/generate_npc",
+        json={
+            "adventureId": adventure.id,
+            "characterName": "Test NPC",
+            "selectedSystem": "D&D 5e",
+            "selectedSystemVersion": "Core",
+            "custom_system": "",
+        },
+    )
+
+    # Then the response should be valid and the NPC should be added to the database
+    assert response.status_code == 201
+    assert response.json == {
+        "status": "success",
+        "message": {"NPCBackground": "Background text", "NPCStats": "Stats text"},
+    }
+    assert AdventureNPCs.query.count() == 1
+    npc = AdventureNPCs.query.first()
+    assert npc.npc_name == "Test NPC"
