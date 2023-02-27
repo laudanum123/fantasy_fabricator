@@ -1,8 +1,6 @@
 import pytest
-from main import app, db, routes
+from main import db, routes
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from main.models import Adventures, AdventureLocations, AdventureNPCs, Entities
 
 
 @pytest.fixture()
