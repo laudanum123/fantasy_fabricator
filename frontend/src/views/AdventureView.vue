@@ -77,7 +77,7 @@ export default {
           console.log(error)
         })
     },
-    highlightEntities() {
+    highlightEntities() { //TODO improve readability
       // iterate through adventure components and highlight named entities
       const adventureComponents = [
         this.adventure.AdventureHook,
@@ -88,16 +88,17 @@ export default {
       ];
       const adventure = reactive(this.adventure);
       let keys = Object.keys(adventure);
+      console.log(keys)
       adventureComponents.forEach((component, index) => {
         // console.log(component)
         // console.log(index)
         let highlightedText = component;
         this.NPCs.forEach((entity) => { // loop over NPCs
           const link = `<a href="/npc?id=${entity}">${entity}</a>`;
-          console.log(entity)
-          console.log(link)
+          // console.log(entity)
+          // console.log(link)
           highlightedText = highlightedText.replace(new RegExp(entity, "gi"), link); // g: global,i: case-insensitive
-          console.log(highlightedText.includes(entity))
+          // console.log(highlightedText.includes(entity))
         });
         // this.locations.forEach((entity) => { // loop over locations #currently clashes with NPCs highlighted text
         //   const link = `<a href="/npc?id=${entity}">${entity}</a>`;
