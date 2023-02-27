@@ -3,17 +3,8 @@ import json
 import re
 import openai
 from main import db
-from main.models import Adventures, AdventureNPCs, AdventureLocations
+from main.models import AdventureNPCs, AdventureLocations
 
-
-def query_gpt_api(prompt):
-    """
-    query gpt api
-    """
-    response = openai.Completion.create(
-        engine="text-davinci-003", prompt=prompt, max_tokens=2000
-    )
-    return response
 
 
 def clean_gpt_response(gpt_response: str, expected_keys: list) -> dict:
