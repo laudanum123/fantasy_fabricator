@@ -14,9 +14,6 @@ class Adventures(db.Model):
     adventure_climax = db.Column(db.String)
     adventure_resolution = db.Column(db.String)
     adventure_npcs = db.Column(db.String)
-    entities = db.relationship(
-        "Entities", back_populates="adventure", foreign_keys="Entities.adventure_id"
-    )
 
     def __repr__(self) -> str:
         return f"<Adventures {self.adventure_title}>"
@@ -60,21 +57,6 @@ class Adventures(db.Model):
             )
             db.session.commit()
 
-
-class Entities(db.Model):
-    """Model for Named Entities recognized in adventure text
-
-    Args:
-        Base (Base): Parent Class
-
-    Returns:
-        Entity: Object of Class Entity
-    """
-
-    id = db.Column(db.Integer, primary_key=True)
-    entity_name = db.Column(db.String(255))
-    adventure_id = db.Column(db.Integer, db.ForeignKey("adventures.id"))
-    adventure = db.relationship("Adventures", back_populates="entities")
 
 
 class AdventureNPCs(db.Model):
