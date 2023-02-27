@@ -6,3 +6,4 @@ prompts.txt
 fantasy_fabricator.db
 backend/.coverage
 .coverage
+coverage.xml
