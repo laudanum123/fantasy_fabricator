@@ -7,7 +7,7 @@
           style="margin-right: 1rem; display: inline-block; line-height: 2.5;">Adventure Title:</label>
         <select class="form-control w-75" id="adventure-title" v-model="selectedId">
           <option value="">-- Select Adventure Title --</option>
-          <option v-for="adventure in adventureTitles" :key="adventure.id" :value="adventure.id">{{ adventure.title }}
+          <option v-for="adventure in adventureTitles" :key="adventure.id" :value="adventure.id">{{ adventure.title }} ({{ adventure.id }})
           </option>
         </select>
       </div>
@@ -24,7 +24,8 @@
           <option v-for="gameSystem in gameSystems" :key="gameSystem" :value="gameSystem">{{ gameSystem }}</option>
         </select>
       </div>
-      <div class="form-group d-flex my-2" v-if="selectedSystem === 'Define other'">
+      <!-- TODO Define other option not working -->
+      <div class="form-group d-flex my-2" v-if="selectedSystem === 'Define other'"> 
         <label for="custom-system" class="w-25"
           style="margin-right: 1rem; display: inline-block; line-height: 2.5;">Custom System:</label>
         <input type="text" class="form-control w-75" id="custom-system" v-model="customSystem"
