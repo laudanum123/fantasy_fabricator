@@ -1,10 +1,10 @@
 import openai
 from flask import Blueprint, jsonify, request
 from main import app, db
-from main.models import AdventureLocations, AdventureNPCs, Adventures, Entities
+from main.models import AdventureLocations, AdventureNPCs, Adventures
 from main.util import utilities
 from main.util.api_key import API_KEY
-import json
+
 
 routes = Blueprint("routes", __name__)
 
@@ -99,7 +99,6 @@ def delete_adventures_from_db():
     delete adventure(s) from database
     """
 
-    print(request.json)
     if request.json:
         adventure_ids = request.json["ids"]
         Adventures.delete_adventures(adventure_ids)
@@ -158,8 +157,7 @@ def get_locations_from_db():
 @routes.route("/generate_npc", methods=["POST"])
 def generate_npc():
     """Create a new NPC for an Adventure using GPT-3 and return the result"""
-    print(len(request.json))
-    print(request.json)
+
     if request.json["adventureId"] == "":
         return "Please provide adventure id", 400
 
@@ -173,7 +171,7 @@ def generate_npc():
         npc["game_system"] = request.json["custom_system"]
 
     adventure = Adventures.get_adventures(npc["adventure_id"])[0]
-    print(adventure)
+
     prompt = f'You are a professional writer of RPG Adventures who is tasked with\
     creating an background and game stats for Non Player Characters. \
     The NPC is called {npc["name"]} and is supposed to be\
