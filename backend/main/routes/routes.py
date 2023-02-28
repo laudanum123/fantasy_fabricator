@@ -111,9 +111,28 @@ def delete_adventures_from_db():
 @routes.route("/extract_entities/<id>", methods=["POST"])
 def extract_entities(id):
 
-    adventure = Adventures.get_adventures(id)[0]
+    adventure_dict = Adventures.get_adventures(id)[0]
+    adventure = Adventures.query.filter_by(id=id).first()
 
-    npc_list, locations_list = utilities.extract_entities_from_adventure(adventure)
+    npc_list,locations_list = utilities.extract_entities_from_adventure(adventure_dict)
+
+    for npc in npc_list:
+        npc_obj = AdventureNPCs.query.filter_by(adventure_id=id, npc_name=npc).first()
+        if not npc_obj:
+            npc_obj = AdventureNPCs(adventure_id=id, npc_name=npc)
+            db.session.add(npc_obj)
+
+    for location in locations_list:
+        location_obj = AdventureLocations.query.filter_by(adventure_id=id, location_name=location).first()
+        if not location_obj:
+            location_obj = AdventureLocations(adventure_id=id, location_name=location)
+            db.session.add(location_obj)
+
+    if adventure:
+        adventure.entities_extracted = True
+
+    db.session.commit()
+
 
     response = jsonify({"status": "success", "message": [npc_list, locations_list]})
     response.status_code = 201

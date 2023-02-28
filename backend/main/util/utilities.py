@@ -67,7 +67,9 @@ def extract_entities_from_adventure(adventure: list):
     adventure.pop("id", None)
 
     # join all the values of the dictionary into one string
-    corpus = " ".join(adventure.values())
+
+    corpus = ''.join([v for k, v in adventure.items() if type(v) == str])
+
     prompt = f'Given the following RPG story: {corpus}.\
     Extract all entities. \
     Entities refer to all NPCs (non-player character) and locations.\

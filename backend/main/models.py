@@ -42,6 +42,7 @@ class Adventures(db.Model):
                     "AdventureNPCs": adventure.adventure_npcs,
                 }
             )
+
         return adventures
 
     @staticmethod
